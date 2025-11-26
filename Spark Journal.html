@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spark Journal - 个人媒体记录</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --primary-light: #a29bfe;
+            --secondary-color: #fd79a8;
+            --background: #f5f6fa;
+            --surface: #ffffff;
+            --text-primary: #2d3436;
+            --text-secondary: #636e72;
+            --success: #00b894;
+            --warning: #fdcb6e;
+            --danger: #e17055;
+            --border-radius: 12px;
+            --shadow: 0 2px 10px rgba(0,0,0,0.08);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--background);
+            color: var(--text-primary);
+            line-height: 1.5;
+            padding: 0;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        .app-container {
+            max-width: 100%;
+            min-height: 100vh;
+            padding: 0;
+            margin: 0 auto;
+            background-color: var(--background);
+        }
+
+        /* 顶部导航 */
+        .app-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background-color: var(--surface);
+            padding: 15px;
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .app-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .spark-display {
+            display: flex;
+            align-items: center;
+            background-color: var(--primary-light);
+            padding: 8px 15px;
+            border-radius: 20px;
+            color: white;
+            font-weight: 600;
+        }
+
+        .spark-icon {
+            margin-right: 5px;
+        }
+
+        /* 底部导航 */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--surface);
+            display: flex;
+            padding: 10px 0;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 5px 0;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 12px;
+            transition: var(--transition);
+        }
+
+        .nav-item.active {
+            color: var(--primary-color);
+        }
+
+        .nav-icon {
+            font-size: 20px;
+            margin-bottom: 3px;
+        }
+
+        /* 主内容区域 */
+        .main-content {
+            padding: 15px;
+            padding-bottom: 70px; /* 为底部导航留出空间 */
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .section {
+            background-color: var(--surface);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: var(--shadow);
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title i {
+            margin-right: 8px;
+            color: var(--primary-color);
+        }
+
+        /* 按钮样式 */
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:active {
+            background-color: var(--primary-light);
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .btn-warning {
+            background-color: var(--warning);
+            color: white;
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        /* 作品卡片 */
+        .item-card {
+            background-color: var(--surface);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            margin-bottom: 10px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .item-card:active {
+            transform: scale(0.98);
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .item-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .item-meta {
+            display: flex;
+            gap: 8px;
+            font-size: 12px;
+        }
+
+        .item-tag {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .tag-status {
+            background-color: var(--warning);
+            color: white;
+        }
+
+        .tag-type {
+            background-color: var(--primary-light);
+            color: white;
+        }
+
+        .tag-done {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .tag-dropped {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .item-rating {
+            margin-top: 8px;
+            color: var(--warning);
+        }
+
+        .item-comment {
+            margin-top: 8px;
+            font-style: italic;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* 计时器 */
+        .timer-display {
+            font-size: 48px;
+            font-weight: 700;
+            text-align: center;
+            margin: 20px 0;
+            color: var(--primary-color);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .timer-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .timer-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* AI激励卡片 */
+        .ai-motivation {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ai-motivation::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+            z-index: 0;
+        }
+
+        .ai-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .ai-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .ai-icon {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+
+        .ai-text {
+            font-size: 16px;
+            line-height: 1.4;
+        }
+
+        .ai-hint {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        /* 统计卡片 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .stat-card {
+            background-color: var(--primary-light);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            text-align: center;
+            color: white;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        /* 奖励项 */
+        .reward-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .reward-item:last-child {
+            border-bottom: none;
+        }
+
+        .reward-info h4 {
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .reward-info p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .reward-cost {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state i {
+            font-size: 50px;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        /* 模态框 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background-color: var(--surface);
+            width: 100%;
+            max-width: 500px;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-primary);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            background-color: var(--surface);
+        }
+
+        .form-textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        /* 通知 */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: var(--success);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            animation: slideInRight 0.5s, fadeOut 0.5s 2.5s forwards;
+        }
+
+        .notification i {
+            margin-right: 8px;
+        }
+
+        /* 动画 */
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .timer-controls {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- 顶部导航 -->
+        <header class="app-header">
+            <div class="app-title">Spark Journal</div>
+            <div class="spark-display">
+                <span class="spark-icon">🔥</span>
+                <span id="spark-count">0.0</span>
+            </div>
+        </header>
+
+        <!-- 主内容区域 -->
+        <main class="main-content">
+            <!-- AI激励卡片 -->
+            <div class="ai-motivation" id="ai-motivation">
+                <div class="ai-content">
+                    <div class="ai-header">
+                        <i class="fas fa-robot ai-icon"></i>
+                        <h3>AI激励助手</h3>
+                    </div>
+                    <div class="ai-text" id="ai-text">
+                        欢迎使用Spark Journal！开始记录你的第一个作品吧！
+                    </div>
+                    <div class="ai-hint">
+                        <i class="fas fa-sync-alt"></i> 点击刷新激励语
+                    </div>
+                </div>
+            </div>
+
+            <!-- 作品库页面 -->
+            <div class="page active" id="library-page">
+                <div class="section">
+                    <button class="btn btn-primary" id="add-item-btn">
+                        <i class="fas fa-plus"></i> 添加新作品
+                    </button>
+                </div>
+                
+                <div id="items-container">
+                    <!-- 作品卡片将通过JS动态添加 -->
+                </div>
+                
+                <div class="empty-state" id="empty-library">
+                    <i class="fas fa-book-open"></i>
+                    <h3>还没有作品记录</h3>
+                    <p>点击上方按钮添加你的第一个作品</p>
+                </div>
+            </div>
+
+            <!-- 专注页面 -->
+            <div class="page" id="focus-page">
+                <div class="section">
+                    <h2 class="section-title">
+                        <i class="fas fa-clock"></i> 专注计时器
+                    </h2>
+                    <p style="text-align: center; margin-bottom: 15px; color: var(--text-secondary);">
+                        专注投入作品，每25分钟可获得0.1火花
+                    </p>
+                    <div class="timer-display" id="timer-display">25:00</div>
+                    <div class="timer-controls">
+                        <button class="timer-btn btn-success" id="start-timer">开始</button>
+                        <button class="timer-btn btn-warning" id="pause-timer" disabled>暂停</button>
+                        <button class="timer-btn btn-danger" id="reset-timer">重置</button>
+                    </div>
+                    <button class="btn btn-primary" id="claim-sparks" disabled style="margin-top: 15px;">
+                        领取火花 (+0.1)
+                    </button>
+                </div>
+                
+                <div class="section">
+                    <h2 class="section-title">
+                        <i class="fas fa-play-circle"></i> 正在进行的作品
+                    </h2>
+                    <div id="doing-items-container">
+                        <!-- 正在进行的作品将通过JS动态添加 -->
+                    </div>
+                    
+                    <div class="empty-state" id="empty-doing">
+                        <i class="fas fa-hourglass-half"></i>
+                        <h3>没有正在进行的作品</h3>
+                        <p>在作品库中将作品状态设为"在搞"后，可以在这里开始专注</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 统计页面 -->
+            <div class="page" id="stats-page">
+                <div class="section">
+                    <h2 class="section-title">
+                        <i class="fas fa-chart-bar"></i> 数据概览
+                    </h2>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="total-items">0</div>
+                            <div class="stat-label">总作品数</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="completed-items">0</div>
+                            <div class="stat-label">已完成</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="avg-rating">0.0</div>
+                            <div class="stat-label">平均评分</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="total-sparks">0.0</div>
+                            <div class="stat-label">总火花数</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h2 class="section-title">
+                        <i class="fas fa-chart-pie"></i> 作品类型分布
+                    </h2>
+                    <div id="type-chart">
+                        <!-- 类型分布图表将通过JS动态生成 -->
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h2 class="section-title">
+                        <i class="fas fa-tasks"></i> 作品状态分布
+                    </h2>
+                    <div id="status-chart">
+                        <!-- 状态分布图表将通过JS动态生成 -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 奖励页面 -->
+            <div class="page" id="rewards-page">
+                <div class="section">
+                    <h2 class="section-title">
+                        <i class="fas fa-gift"></i> 奖励兑换
+                    </h2>
+                    <div class="rewards-list">
+                        <div class="reward-item">
+                            <div class="reward-info">
+                                <h4>一杯奶茶</h4>
+                                <p>奖励自己一杯喜欢的饮料</p>
+                            </div>
+                            <div>
+                                <span class="reward-cost">-5.0 火花</span>
+                                <button class="btn btn-primary" data-cost="5.0" style="padding: 8px 15px; margin-left: 10px;">兑换</button>
+                            </div>
+                        </div>
+                        
+                        <div class="reward-item">
+                            <div class="reward-info">
+                                <h4>买一款游戏</h4>
+                                <p>购买一款想玩的游戏</p>
+                            </div>
+                            <div>
+                                <span class="reward-cost">-2.0 火花</span>
+                                <button class="btn btn-primary" data-cost="2.0" style="padding: 8px 15px; margin-left: 10px;">兑换</button>
+                            </div>
+                        </div>
+                        
+                        <div class="reward-item">
+                            <div class="reward-info">
+                                <h4>刷短视频/无意义内容30分钟</h4>
+                                <p>允许自己刷30分钟无意义内容</p>
+                            </div>
+                            <div>
+                                <span class="reward-cost">-0.5 火花</span>
+                                <button class="btn btn-primary" data-cost="0.5" style="padding: 8px 15px; margin-left: 10px;">兑换</button>
+                            </div>
+                        </div>
+                        
+                        <div class="reward-item">
+                            <div class="reward-info">
+                                <h4>自定义奖励</h4>
+                                <input type="text" id="custom-reward" placeholder="输入你的奖励" class="form-input" style="margin-top: 5px;">
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
+                                <input type="number" id="custom-cost" min="0.1" step="0.1" value="1.0" class="form-input" style="width: 80px;">
+                                <span>火花</span>
+                                <button class="btn btn-primary" id="add-custom-reward" style="padding: 8px 15px;">添加</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- 底部导航 -->
+        <nav class="bottom-nav">
+            <a href="#" class="nav-item active" data-page="library-page">
+                <i class="fas fa-book nav-icon"></i>
+                <span>作品库</span>
+            </a>
+            <a href="#" class="nav-item" data-page="focus-page">
+                <i class="fas fa-clock nav-icon"></i>
+                <span>专注</span>
+            </a>
+            <a href="#" class="nav-item" data-page="stats-page">
+                <i class="fas fa-chart-bar nav-icon"></i>
+                <span>统计</span>
+            </a>
+            <a href="#" class="nav-item" data-page="rewards-page">
+                <i class="fas fa-gift nav-icon"></i>
+                <span>奖励</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- 添加作品模态框 -->
+    <div class="modal" id="add-item-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">添加新作品</h2>
+                <button class="close-btn" id="close-modal">&times;</button>
+            </div>
+            <form id="item-form">
+                <div class="form-group">
+                    <label class="form-label" for="item-title">作品名称</label>
+                    <input type="text" class="form-input" id="item-title" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="item-type">作品类型</label>
+                    <select class="form-select" id="item-type" required>
+                        <option value="">请选择类型</option>
+                        <option value="游戏">游戏</option>
+                        <option value="书籍">书籍</option>
+                        <option value="视频">视频</option>
+                        <option value="其他">其他</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="item-status">当前状态</label>
+                    <select class="form-select" id="item-status" required>
+                        <option value="">请选择状态</option>
+                        <option value="想试">想试</option>
+                        <option value="在搞">在搞</option>
+                        <option value="已完成！">已完成！</option>
+                        <option value="已弃坑">已弃坑</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="item-rating">评分 (1-10)</label>
+                    <input type="number" class="form-input" id="item-rating" min="1" max="10" step="0.1">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="item-comment">短评</label>
+                    <textarea class="form-textarea" id="item-comment"></textarea>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">保存作品</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // AI激励语库
+        const aiMotivations = {
+            welcome: [
+                "欢迎使用Spark Journal！开始记录你的第一个作品吧！",
+                "准备好记录你的游戏、书籍和影视作品了吗？",
+                "火花等待被你点燃，开始你的创作之旅吧！"
+            ],
+            empty: [
+                "你的作品库空空如也，是时候添加一些内容了！",
+                "没有记录的作品就像没有星星的夜空，添加一些吧！",
+                "开始建立你的个人媒体库，记录每一个精彩瞬间！"
+            ],
+            progress: [
+                "你已经完成了{completed}部作品！继续保持这个势头！",
+                "专注{totalHours}小时，获得了{sparks}火花，太棒了！",
+                "你的{completed}部已完成作品证明了你的坚持！"
+            ],
+            encouragement: [
+                "专注25分钟就能获得0.1火花，每一分钟都算数！",
+                "完成一部作品可以获得1火花，比专注更有效率！",
+                "你的{doingCount}部进行中作品正在等待完成！",
+                "平均评分{avgRating}，说明你很有品味呢！",
+                "火花已经积累到{sparks}了，离奖励越来越近了！"
+            ],
+            humorous: [
+                "别让想试列表越来越长，完成列表却一动不动！",
+                "你的专注时间比刷短视频的时间还少？我不信！",
+                "完成一部作品获得的火花，够你刷2.5小时短视频呢！",
+                "你的{doingCount}部进行中作品说：'选我！选我！'",
+                "火花不会自己增加，但拖延症会自己发作！"
+            ]
+        };
+
+        // 应用状态和数据
+        const appState = {
+            items: JSON.parse(localStorage.getItem('sparkjournal_items')) || [],
+            sparks: parseFloat(localStorage.getItem('sparkjournal_sparks')) || 0.0,
+            timer: {
+                isRunning: false,
+                timeLeft: 25 * 60, // 25分钟，以秒为单位
+                interval: null
+            }
+        };
+        
+        // DOM元素
+        const elements = {
+            sparkCount: document.getElementById('spark-count'),
+            itemsContainer: document.getElementById('items-container'),
+            doingItemsContainer: document.getElementById('doing-items-container'),
+            emptyLibrary: document.getElementById('empty-library'),
+            emptyDoing: document.getElementById('empty-doing'),
+            addItemBtn: document.getElementById('add-item-btn'),
+            addItemModal: document.getElementById('add-item-modal'),
+            closeModal: document.getElementById('close-modal'),
+            itemForm: document.getElementById('item-form'),
+            navItems: document.querySelectorAll('.nav-item'),
+            pages: document.querySelectorAll('.page'),
+            timerDisplay: document.getElementById('timer-display'),
+            startTimer: document.getElementById('start-timer'),
+            pauseTimer: document.getElementById('pause-timer'),
+            resetTimer: document.getElementById('reset-timer'),
+            claimSparks: document.getElementById('claim-sparks'),
+            totalItems: document.getElementById('total-items'),
+            completedItems: document.getElementById('completed-items'),
+            avgRating: document.getElementById('avg-rating'),
+            totalSparks: document.getElementById('total-sparks'),
+            typeChart: document.getElementById('type-chart'),
+            statusChart: document.getElementById('status-chart'),
+            rewardButtons: document.querySelectorAll('[data-cost]'),
+            addCustomReward: document.getElementById('add-custom-reward'),
+            aiMotivation: document.getElementById('ai-motivation'),
+            aiText: document.getElementById('ai-text')
+        };
+        
+        // 初始化应用
+        function initApp() {
+            updateSparkDisplay();
+            renderItems();
+            setupEventListeners();
+            updateStats();
+            updateAIMotivation();
+        }
+        
+        // 设置事件监听器
+        function setupEventListeners() {
+            // 底部导航切换
+            elements.navItems.forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const pageId = item.getAttribute('data-page');
+                    switchPage(pageId);
+                    
+                    // 更新导航状态
+                    elements.navItems.forEach(nav => nav.classList.remove('active'));
+                    item.classList.add('active');
+                });
+            });
+            
+            // AI激励卡片点击事件
+            elements.aiMotivation.addEventListener('click', updateAIMotivation);
+            
+            // 模态框
+            elements.addItemBtn.addEventListener('click', () => {
+                elements.addItemModal.style.display = 'flex';
+            });
+            
+            elements.closeModal.addEventListener('click', () => {
+                elements.addItemModal.style.display = 'none';
+            });
+            
+            // 表单提交
+            elements.itemForm.addEventListener('submit', handleFormSubmit);
+            
+            // 计时器控制
+            elements.startTimer.addEventListener('click', startTimer);
+            elements.pauseTimer.addEventListener('click', pauseTimer);
+            elements.resetTimer.addEventListener('click', resetTimer);
+            elements.claimSparks.addEventListener('click', claimSparks);
+            
+            // 奖励兑换
+            elements.rewardButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const cost = parseFloat(button.getAttribute('data-cost'));
+                    let rewardName = '';
+                    
+                    if (button.id !== 'add-custom-reward') {
+                        rewardName = button.parentElement.parentElement.querySelector('h4').textContent;
+                    } else {
+                        rewardName = document.getElementById('custom-reward').value;
+                        if (!rewardName) {
+                            alert('请输入奖励名称');
+                            return;
+                        }
+                    }
+                    
+                    redeemReward(cost, rewardName);
+                });
+            });
+            
+            elements.addCustomReward.addEventListener('click', () => {
+                const cost = parseFloat(document.getElementById('custom-cost').value);
+                const rewardName = document.getElementById('custom-reward').value;
+                
+                if (!rewardName) {
+                    alert('请输入奖励名称');
+                    return;
+                }
+                
+                if (isNaN(cost) || cost <= 0) {
+                    alert('请输入有效的火花数量');
+                    return;
+                }
+                
+                redeemReward(cost, rewardName);
+                
+                // 清空输入框
+                document.getElementById('custom-reward').value = '';
+                document.getElementById('custom-cost').value = '1.0';
+            });
+        }
+        
+        // 更新AI激励语
+        function updateAIMotivation() {
+            const completedCount = appState.items.filter(item => item.status === '已完成！').length;
+            const doingCount = appState.items.filter(item => item.status === '在搞').length;
+            const totalHours = (appState.sparks * 10).toFixed(1); // 估算专注小时数
+            const ratedItems = appState.items.filter(item => item.rating);
+            const avgRating = ratedItems.length > 0 ? 
+                (ratedItems.reduce((sum, item) => sum + item.rating, 0) / ratedItems.length).toFixed(1) : 
+                '0.0';
+            
+            let motivationPool = [];
+            
+            if (appState.items.length === 0) {
+                motivationPool = aiMotivations.empty;
+            } else if (completedCount === 0) {
+                motivationPool = [...aiMotivations.encouragement, ...aiMotivations.humorous];
+            } else {
+                motivationPool = [
+                    ...aiMotivations.progress,
+                    ...aiMotivations.encouragement, 
+                    ...aiMotivations.humorous
+                ];
+            }
+            
+            // 随机选择一条激励语
+            const randomMotivation = motivationPool[Math.floor(Math.random() * motivationPool.length)];
+            
+            // 替换模板变量
+            let finalMotivation = randomMotivation
+                .replace('{completed}', completedCount)
+                .replace('{doingCount}', doingCount)
+                .replace('{totalHours}', totalHours)
+                .replace('{sparks}', appState.sparks.toFixed(1))
+                .replace('{avgRating}', avgRating);
+            
+            elements.aiText.textContent = finalMotivation;
+        }
+        
+        // 切换页面
+        function switchPage(pageId) {
+            // 更新页面显示
+            elements.pages.forEach(page => {
+                if (page.id === pageId) {
+                    page.classList.add('active');
+                } else {
+                    page.classList.remove('active');
+                }
+            });
+            
+            // 如果是专注页面，更新正在进行的作品列表
+            if (pageId === 'focus-page') {
+                renderDoingItems();
+            }
+            
+            // 如果是统计页面，更新统计数据
+            if (pageId === 'stats-page') {
+                updateStats();
+            }
+            
+            // 更新AI激励语
+            updateAIMotivation();
+        }
+        
+        // 处理表单提交
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            
+            const title = document.getElementById('item-title').value;
+            const type = document.getElementById('item-type').value;
+            const status = document.getElementById('item-status').value;
+            const rating = document.getElementById('item-rating').value ? parseFloat(document.getElementById('item-rating').value) : null;
+            const comment = document.getElementById('item-comment').value;
+            
+            // 检查是否是编辑模式
+            const editingItemId = elements.itemForm.getAttribute('data-editing');
+            let oldStatus = null;
+            
+            if (editingItemId) {
+                // 编辑现有作品
+                const oldItem = appState.items.find(item => item.id === editingItemId);
+                oldStatus = oldItem.status;
+                
+                // 更新作品
+                const itemIndex = appState.items.findIndex(item => item.id === editingItemId);
+                appState.items[itemIndex] = {
+                    ...appState.items[itemIndex],
+                    title,
+                    type,
+                    status,
+                    rating,
+                    comment,
+                    updatedAt: new Date().toISOString()
+                };
+                
+                // 检查状态是否从"在搞"变为"已完成！"
+                if (oldStatus === '在搞' && status === '已完成！') {
+                    appState.sparks += 1.0;
+                    updateSparkDisplay();
+                    saveSparks();
+                    showSparkNotification(1.0, "完成作品奖励");
+                }
+                
+                // 移除编辑标记
+                elements.itemForm.removeAttribute('data-editing');
+            } else {
+                // 添加新作品
+                const newItem = {
+                    id: Date.now().toString(),
+                    title,
+                    type,
+                    status,
+                    rating,
+                    comment,
+                    createdAt: new Date().toISOString()
+                };
+                
+                appState.items.push(newItem);
+            }
+            
+            saveItems();
+            renderItems();
+            updateAIMotivation();
+            
+            // 重置表单并关闭模态框
+            elements.itemForm.reset();
+            elements.addItemModal.style.display = 'none';
+        }
+        
+        // 保存作品数据到localStorage
+        function saveItems() {
+            localStorage.setItem('sparkjournal_items', JSON.stringify(appState.items));
+        }
+        
+        // 保存火花数据到localStorage
+        function saveSparks() {
+            localStorage.setItem('sparkjournal_sparks', appState.sparks.toString());
+        }
+        
+        // 渲染作品列表
+        function renderItems() {
+            elements.itemsContainer.innerHTML = '';
+            
+            if (appState.items.length === 0) {
+                elements.emptyLibrary.style.display = 'block';
+                return;
+            }
+            
+            elements.emptyLibrary.style.display = 'none';
+            
+            // 按最近更新时间排序
+            const sortedItems = [...appState.items].sort((a, b) => {
+                const dateA = a.updatedAt || a.createdAt;
+                const dateB = b.updatedAt || b.createdAt;
+                return new Date(dateB) - new Date(dateA);
+            });
+            
+            sortedItems.forEach(item => {
+                const itemElement = createItemElement(item);
+                elements.itemsContainer.appendChild(itemElement);
+            });
+        }
+        
+        // 渲染正在进行的作品列表
+        function renderDoingItems() {
+            elements.doingItemsContainer.innerHTML = '';
+            
+            const doingItems = appState.items.filter(item => item.status === '在搞');
+            
+            if (doingItems.length === 0) {
+                elements.emptyDoing.style.display = 'block';
+                return;
+            }
+            
+            elements.emptyDoing.style.display = 'none';
+            
+            doingItems.forEach(item => {
+                const itemElement = createItemElement(item);
+                elements.doingItemsContainer.appendChild(itemElement);
+            });
+        }
+        
+        // 创建作品元素
+        function createItemElement(item) {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'item-card';
+            itemDiv.setAttribute('data-id', item.id);
+            
+            // 确定状态标签类
+            let statusClass = 'tag-status';
+            if (item.status === '已完成！') statusClass = 'tag-done';
+            if (item.status === '已弃坑') statusClass = 'tag-dropped';
+            
+            // 生成星级评分
+            let starsHtml = '';
+            if (item.rating) {
+                const fullStars = Math.floor(item.rating / 2);
+                const halfStar = item.rating % 2 >= 1;
+                
+                for (let i = 0; i < 5; i++) {
+                    if (i < fullStars) {
+                        starsHtml += '★';
+                    } else if (i === fullStars && halfStar) {
+                        starsHtml += '½';
+                    } else {
+                        starsHtml += '☆';
+                    }
+                }
+            }
+            
+            itemDiv.innerHTML = `
+                <div class="item-header">
+                    <div>
+                        <div class="item-title">${item.title}</div>
+                        <div class="item-meta">
+                            <span class="item-tag ${statusClass}">${item.status}</span>
+                            <span class="item-tag tag-type">${item.type}</span>
+                        </div>
+                    </div>
+                    <div>
+                        <button class="edit-btn" data-id="${item.id}" style="background: none; border: none; color: var(--primary-color); font-size: 16px;">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </div>
+                </div>
+                ${item.rating ? `<div class="item-rating">${starsHtml} ${item.rating}/10</div>` : ''}
+                ${item.comment ? `<div class="item-comment">${item.comment}</div>` : ''}
+            `;
+            
+            // 添加编辑事件
+            const editBtn = itemDiv.querySelector('.edit-btn');
+            editBtn.addEventListener('click', () => editItem(item.id));
+            
+            return itemDiv;
+        }
+        
+        // 编辑作品
+        function editItem(id) {
+            const item = appState.items.find(item => item.id === id);
+            if (!item) return;
+            
+            // 填充表单
+            document.getElementById('item-title').value = item.title;
+            document.getElementById('item-type').value = item.type;
+            document.getElementById('item-status').value = item.status;
+            document.getElementById('item-rating').value = item.rating || '';
+            document.getElementById('item-comment').value = item.comment || '';
+            
+            // 设置编辑标记
+            elements.itemForm.setAttribute('data-editing', id);
+            
+            // 显示模态框
+            elements.addItemModal.style.display = 'flex';
+        }
+        
+        // 更新火花显示
+        function updateSparkDisplay() {
+            elements.sparkCount.textContent = appState.sparks.toFixed(1);
+        }
+        
+        // 显示火花获得通知
+        function showSparkNotification(amount, reason) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.innerHTML = `
+                <i class="fas fa-fire"></i>
+                <div>
+                    <div>+${amount.toFixed(1)} 火花</div>
+                    <div style="font-size: 12px;">${reason}</div>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                if (document.body.contains(notification)) {
+                    document.body.removeChild(notification);
+                }
+            }, 3000);
+        }
+        
+        // 计时器功能
+        function startTimer() {
+            if (appState.timer.isRunning) return;
+            
+            appState.timer.isRunning = true;
+            elements.startTimer.disabled = true;
+            elements.pauseTimer.disabled = false;
+            elements.claimSparks.disabled = true;
+            
+            appState.timer.interval = setInterval(() => {
+                appState.timer.timeLeft--;
+                updateTimerDisplay();
+                
+                if (appState.timer.timeLeft <= 0) {
+                    clearInterval(appState.timer.interval);
+                    appState.timer.isRunning = false;
+                    elements.claimSparks.disabled = false;
+                    elements.pauseTimer.disabled = true;
+                }
+            }, 1000);
+        }
+        
+        function pauseTimer() {
+            if (!appState.timer.isRunning) return;
+            
+            clearInterval(appState.timer.interval);
+            appState.timer.isRunning = false;
+            elements.startTimer.disabled = false;
+            elements.pauseTimer.disabled = true;
+        }
+        
+        function resetTimer() {
+            clearInterval(appState.timer.interval);
+            appState.timer.isRunning = false;
+            appState.timer.timeLeft = 25 * 60;
+            elements.startTimer.disabled = false;
+            elements.pauseTimer.disabled = true;
+            elements.claimSparks.disabled = true;
+            updateTimerDisplay();
+        }
+        
+        function updateTimerDisplay() {
+            const minutes = Math.floor(appState.timer.timeLeft / 60);
+            const seconds = appState.timer.timeLeft % 60;
+            elements.timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+        function claimSparks() {
+            appState.sparks += 0.1;
+            updateSparkDisplay();
+            saveSparks();
+            showSparkNotification(0.1, "专注奖励");
+            updateAIMotivation();
+            resetTimer();
+        }
+        
+        // 更新统计数据
+        function updateStats() {
+            // 总作品数
+            elements.totalItems.textContent = appState.items.length;
+            
+            // 已完成作品数
+            const completedCount = appState.items.filter(item => item.status === '已完成！').length;
+            elements.completedItems.textContent = completedCount;
+            
+            // 平均评分
+            const ratedItems = appState.items.filter(item => item.rating);
+            const avgRating = ratedItems.length > 0 ? 
+                (ratedItems.reduce((sum, item) => sum + item.rating, 0) / ratedItems.length).toFixed(1) : 
+                '0.0';
+            elements.avgRating.textContent = avgRating;
+            
+            // 总火花数
+            elements.totalSparks.textContent = appState.sparks.toFixed(1);
+            
+            // 类型分布
+            updateTypeChart();
+            
+            // 状态分布
+            updateStatusChart();
+        }
+        
+        // 更新类型分布图表
+        function updateTypeChart() {
+            const typeCounts = {};
+            appState.items.forEach(item => {
+                typeCounts[item.type] = (typeCounts[item.type] || 0) + 1;
+            });
+            
+            let chartHtml = '<div style="margin-top: 10px;">';
+            for (const type in typeCounts) {
+                const count = typeCounts[type];
+                const percentage = appState.items.length > 0 ? (count / appState.items.length * 100).toFixed(1) : 0;
+                
+                chartHtml += `
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 14px;">
+                        <span>${type}</span>
+                        <span>${count} (${percentage}%)</span>
+                    </div>
+                    <div style="height: 10px; background: #e0e0e0; border-radius: 5px; margin-bottom: 10px;">
+                        <div style="height: 100%; width: ${percentage}%; background: var(--primary-color); border-radius: 5px;"></div>
+                    </div>
+                `;
+            }
+            chartHtml += '</div>';
+            
+            elements.typeChart.innerHTML = chartHtml;
+        }
+        
+        // 更新状态分布图表
+        function updateStatusChart() {
+            const statusCounts = {};
+            appState.items.forEach(item => {
+                statusCounts[item.status] = (statusCounts[item.status] || 0) + 1;
+            });
+            
+            let chartHtml = '<div style="margin-top: 10px;">';
+            for (const status in statusCounts) {
+                const count = statusCounts[status];
+                const percentage = appState.items.length > 0 ? (count / appState.items.length * 100).toFixed(1) : 0;
+                
+                // 确定颜色
+                let color = 'var(--warning)';
+                if (status === '已完成！') color = 'var(--success)';
+                if (status === '已弃坑') color = 'var(--danger)';
+                if (status === '想试') color = 'var(--primary-light)';
+                
+                chartHtml += `
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 14px;">
+                        <span>${status}</span>
+                        <span>${count} (${percentage}%)</span>
+                    </div>
+                    <div style="height: 10px; background: #e0e0e0; border-radius: 5px; margin-bottom: 10px;">
+                        <div style="height: 100%; width: ${percentage}%; background: ${color}; border-radius: 5px;"></div>
+                    </div>
+                `;
+            }
+            chartHtml += '</div>';
+            
+            elements.statusChart.innerHTML = chartHtml;
+        }
+        
+        // 兑换奖励
+        function redeemReward(cost, rewardName) {
+            if (appState.sparks < cost) {
+                alert('火花不足，无法兑换此奖励！');
+                return;
+            }
+            
+            if (confirm(`确定要花费 ${cost} 火花兑换"${rewardName}"吗？`)) {
+                appState.sparks -= cost;
+                updateSparkDisplay();
+                saveSparks();
+                updateAIMotivation();
+                alert(`成功兑换 ${rewardName}！`);
+            }
+        }
+        
+        // 初始化应用
+        initApp();
+    </script>
+</body>
+</html>
