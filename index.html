@@ -518,172 +518,173 @@
                 flex-direction: column;
             }
         }
+
         /* 抽卡相关新样式 */
-.gacha-section {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border-radius: var(--border-radius);
-    padding: 20px;
-    margin-bottom: 15px;
-    box-shadow: var(--shadow);
-    text-align: center;
-}
+        .gacha-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
 
-.gacha-cost {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    margin: 10px 0;
-    font-size: 18px;
-}
+        .gacha-cost {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin: 10px 0;
+            font-size: 18px;
+        }
 
-.gacha-btn {
-    background: linear-gradient(45deg, #FFD700, #FFA500);
-    color: #333;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 25px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
-}
+        .gacha-btn {
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            color: #333;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+        }
 
-.gacha-btn:active {
-    transform: scale(0.95);
-}
+        .gacha-btn:active {
+            transform: scale(0.95);
+        }
 
-.gacha-btn:disabled {
-    background: #cccccc;
-    cursor: not-allowed;
-    transform: none;
-}
+        .gacha-btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+        }
 
-.card-display {
-    width: 120px;
-    height: 160px;
-    margin: 15px auto;
-    border-radius: 12px;
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-    overflow: hidden;
-    position: relative;
-}
+        .card-display {
+            width: 120px;
+            height: 160px;
+            margin: 15px auto;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            overflow: hidden;
+            position: relative;
+        }
 
-.card-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 12px;
-}
+        .card-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 12px;
+        }
 
-.card-placeholder {
-    color: #666;
-    font-size: 14px;
-    text-align: center;
-    padding: 20px;
-}
+        .card-placeholder {
+            color: #666;
+            font-size: 14px;
+            text-align: center;
+            padding: 20px;
+        }
 
-/* 收集册样式 */
-.collection-series {
-    margin-bottom: 25px;
-}
+        /* 收集册样式 */
+        .collection-series {
+            margin-bottom: 25px;
+        }
 
-.series-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid var(--primary-light);
-}
+        .series-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary-light);
+        }
 
-.series-title {
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--primary-color);
-}
+        .series-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
 
-.series-progress {
-    font-size: 14px;
-    color: var(--text-secondary);
-    background: var(--primary-light);
-    padding: 4px 12px;
-    border-radius: 15px;
-    color: white;
-}
+        .series-progress {
+            font-size: 14px;
+            color: var(--text-secondary);
+            background: var(--primary-light);
+            padding: 4px 12px;
+            border-radius: 15px;
+            color: white;
+        }
 
-.cards-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-}
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
 
-.collection-card {
-    aspect-ratio: 3/4;
-    border-radius: 8px;
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    position: relative;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
+        .collection-card {
+            aspect-ratio: 3/4;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
 
-.collection-card.obtained .card-image {
-    opacity: 1;
-}
+        .collection-card.obtained .card-image {
+            opacity: 1;
+        }
 
-.collection-card .card-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    opacity: 0.3;
-    transition: opacity 0.3s ease;
-}
+        .collection-card .card-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.3;
+            transition: opacity 0.3s ease;
+        }
 
-.card-locked {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: #999;
-    font-size: 24px;
-}
+        .card-locked {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #999;
+            font-size: 24px;
+        }
 
-/* 抽卡动画 */
-@keyframes drawCard {
-    0% { transform: scale(0.8) rotateY(0deg); opacity: 0; }
-    50% { transform: scale(1.1) rotateY(180deg); opacity: 1; }
-    100% { transform: scale(1) rotateY(360deg); opacity: 1; }
-}
+        /* 抽卡动画 */
+        @keyframes drawCard {
+            0% { transform: scale(0.8) rotateY(0deg); opacity: 0; }
+            50% { transform: scale(1.1) rotateY(180deg); opacity: 1; }
+            100% { transform: scale(1) rotateY(360deg); opacity: 1; }
+        }
 
-.card-animation {
-    animation: drawCard 0.8s ease-out;
-}
+        .card-animation {
+            animation: drawCard 0.8s ease-out;
+        }
 
-/* 新卡片提示 */
-.new-card-badge {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    background: var(--secondary-color);
-    color: white;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    font-weight: bold;
-}
+        /* 新卡片提示 */
+        .new-card-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--secondary-color);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -821,23 +822,29 @@
                     <h2 class="section-title">
                         <i class="fas fa-gift"></i> 奖励兑换
                     </h2>
+                    
                     <div class="gacha-section">
-    <h3 style="margin-bottom: 10px;">卡牌抽奖</h3>
-    <p style="margin-bottom: 15px; opacity: 0.9;">花费火花抽取随机卡牌，收集完整系列！</p>
-    
-    <div class="gacha-cost">
-        <span class="spark-icon">🔥</span>
-        <span>1.0 火花</span>
-    </div>
-    
-    <button class="gacha-btn" id="gacha-btn">
-        <i class="fas fa-dice"></i> 抽一次
-    </button>
-    
-    <p style="font-size: 12px; margin-top: 10px; opacity: 0.7;">
-        已收集: <span id="collected-count">0</span> / <span id="total-cards">0</span> 张
-    </p>
-</div>
+                        <h3 style="margin-bottom: 10px;">卡牌抽奖</h3>
+                        <p style="margin-bottom: 15px; opacity: 0.9;">花费火花抽取随机卡牌，收集完整系列！</p>
+                        
+                        <div class="card-display" id="card-display">
+                            <div class="card-placeholder">点击抽卡获得第一张卡牌！</div>
+                        </div>
+                        
+                        <div class="gacha-cost">
+                            <span class="spark-icon">🔥</span>
+                            <span>1.0 火花</span>
+                        </div>
+                        
+                        <button class="gacha-btn" id="gacha-btn">
+                            <i class="fas fa-dice"></i> 抽一次
+                        </button>
+                        
+                        <p style="font-size: 12px; margin-top: 10px; opacity: 0.7;">
+                            已收集: <span id="collected-count">0</span> / <span id="total-cards">0</span> 张
+                        </p>
+                    </div>
+                    
                     <div class="rewards-list">
                         <div class="reward-item">
                             <div class="reward-info">
@@ -886,24 +893,27 @@
                     </div>
                 </div>
             </div>
-        </main>
-<div class="page" id="collection-page">
-    <div class="section">
-        <h2 class="section-title">
-            <i class="fas fa-bookmark"></i> 我的收集册
-        </h2>
-        
-        <div style="text-align: center; margin-bottom: 20px;">
-            <div style="background: var(--primary-light); color: white; padding: 10px 20px; border-radius: 20px; display: inline-block;">
-                总收集进度: <span id="total-progress">0%</span>
+
+            <!-- 收集册页面 -->
+            <div class="page" id="collection-page">
+                <div class="section">
+                    <h2 class="section-title">
+                        <i class="fas fa-bookmark"></i> 我的收集册
+                    </h2>
+                    
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <div style="background: var(--primary-light); color: white; padding: 10px 20px; border-radius: 20px; display: inline-block;">
+                            总收集进度: <span id="total-progress">0%</span>
+                        </div>
+                    </div>
+                    
+                    <div id="collection-container">
+                        <!-- 系列和卡牌将通过JS动态生成 -->
+                    </div>
+                </div>
             </div>
-        </div>
-        
-        <div id="collection-container">
-            <!-- 系列和卡牌将通过JS动态生成 -->
-        </div>
-    </div>
-</div>
+        </main>
+
         <!-- 底部导航 -->
         <nav class="bottom-nav">
             <a href="#" class="nav-item active" data-page="library-page">
@@ -923,9 +933,9 @@
                 <span>奖励</span>
             </a>
             <a href="#" class="nav-item" data-page="collection-page">
-    <i class="fas fa-bookmark nav-icon"></i>
-    <span>收集册</span>
-</a>
+                <i class="fas fa-bookmark nav-icon"></i>
+                <span>收集册</span>
+            </a>
         </nav>
     </div>
 
@@ -1012,6 +1022,32 @@
                 "火花不会自己增加，但拖延症会自己发作！"
             ]
         };
+        
+        // 卡牌数据
+        const cardData = {
+            series1: {
+                name: "火花鼠系列",
+                cards: [
+                    { id: "series1_01", name: "泡泡", image: "images/cards/series1/card1.jpg", rarity: "普通" },
+                    { id: "series1_02", name: "崩溃", image: "images/cards/series1/card2.jpg", rarity: "普通" },
+                    { id: "series1_03", name: "恼火", image: "images/cards/series1/card3.jpg", rarity: "稀有" },
+                    { id: "series1_04", name: "开饭", image: "images/cards/series1/card4.jpg", rarity: "稀有" },
+                    { id: "series1_05", name: "去学习", image: "images/cards/series1/card5.jpg", rarity: "史诗" },
+                    { id: "series1_06", name: "我有一个馊主意", image: "images/cards/series1/card6.jpg", rarity: "传说" },
+                    { id: "series1_07", name: "委屈", image: "images/cards/series1/card7.jpg", rarity: "史诗" },
+                    { id: "series1_08", name: "喜欢", image: "images/cards/series1/card8.jpg", rarity: "史诗" },
+                    { id: "series1_09", name: "坏", image: "images/cards/series1/card9.jpg", rarity: "稀有" },
+                    { id: "series1_10", name: "屁", image: "images/cards/series1/card10.jpg", rarity: "稀有" },
+                    { id: "series1_11", name: "好耶", image: "images/cards/series1/card11.jpg", rarity: "稀有" },
+                    { id: "series1_12", name: "来啦", image: "images/cards/series1/card12.jpg", rarity: "普通" },
+                    { id: "series1_13", name: "麻了", image: "images/cards/series1/card13.jpg", rarity: "普通" },
+                    { id: "series1_14", name: "撞墙", image: "images/cards/series1/card14.jpg", rarity: "普通" },
+                    { id: "series1_15", name: "迷幻", image: "images/cards/series1/card15.jpg", rarity: "普通" },
+                    { id: "series1_16", name: "乖", image: "images/cards/series1/card16.jpg", rarity: "普通" },
+                    { id: "series1_17", name: "连环炮", image: "images/cards/series1/card17.jpg", rarity: "普通" }
+                ]
+            }
+        };
 
         // 应用状态和数据
         const appState = {
@@ -1021,7 +1057,8 @@
                 isRunning: false,
                 timeLeft: 25 * 60, // 25分钟，以秒为单位
                 interval: null
-            }
+            },
+            collectedCards: JSON.parse(localStorage.getItem('sparkjournal_cards')) || []
         };
         
         // DOM元素
@@ -1051,7 +1088,13 @@
             rewardButtons: document.querySelectorAll('[data-cost]'),
             addCustomReward: document.getElementById('add-custom-reward'),
             aiMotivation: document.getElementById('ai-motivation'),
-            aiText: document.getElementById('ai-text')
+            aiText: document.getElementById('ai-text'),
+            gachaBtn: document.getElementById('gacha-btn'),
+            cardDisplay: document.getElementById('card-display'),
+            collectedCount: document.getElementById('collected-count'),
+            totalCards: document.getElementById('total-cards'),
+            collectionContainer: document.getElementById('collection-container'),
+            totalProgress: document.getElementById('total-progress')
         };
         
         // 初始化应用
@@ -1061,6 +1104,7 @@
             setupEventListeners();
             updateStats();
             updateAIMotivation();
+            initCardSystem();
         }
         
         // 设置事件监听器
@@ -1139,6 +1183,16 @@
                 document.getElementById('custom-reward').value = '';
                 document.getElementById('custom-cost').value = '1.0';
             });
+        }
+
+        // 初始化卡牌系统
+        function initCardSystem() {
+            updateCardDisplay();
+            updateCollectionStats();
+            renderCollection();
+            
+            // 抽卡按钮事件
+            elements.gachaBtn.addEventListener('click', drawCard);
         }
         
         // 更新AI激励语
@@ -1277,6 +1331,11 @@
         // 保存火花数据到localStorage
         function saveSparks() {
             localStorage.setItem('sparkjournal_sparks', appState.sparks.toString());
+        }
+
+        // 保存收集的卡牌数据
+        function saveCollectedCards() {
+            localStorage.setItem('sparkjournal_cards', JSON.stringify(appState.collectedCards));
         }
         
         // 渲染作品列表
@@ -1577,6 +1636,206 @@
                 updateAIMotivation();
                 alert(`成功兑换 ${rewardName}！`);
             }
+        }
+
+        // 抽卡功能
+        function drawCard() {
+            if (appState.sparks < 1.0) {
+                alert('火花不足，无法抽卡！');
+                return;
+            }
+
+            if (!confirm('花费1火花抽取一张随机卡牌？')) {
+                return;
+            }
+
+            // 扣除火花
+            appState.sparks -= 1.0;
+            updateSparkDisplay();
+            saveSparks();
+
+            // 随机选择卡牌（按稀有度加权）
+            const allCards = getAllCards();
+            const weights = {
+                "普通": 50,
+                "稀有": 30, 
+                "史诗": 15,
+                "传说": 5
+            };
+
+            let randomPool = [];
+            allCards.forEach(card => {
+                const weight = weights[card.rarity] || 10;
+                for (let i = 0; i < weight; i++) {
+                    randomPool.push(card);
+                }
+            });
+
+            const drawnCard = randomPool[Math.floor(Math.random() * randomPool.length)];
+            
+            // 检查是否是新卡
+            const isNewCard = !appState.collectedCards.includes(drawnCard.id);
+            
+            if (isNewCard) {
+                appState.collectedCards.push(drawnCard.id);
+                saveCollectedCards();
+            }
+
+            // 显示抽到的卡牌
+            showDrawnCard(drawnCard, isNewCard);
+            
+            // 更新统计
+            updateCollectionStats();
+            updateAIMotivation();
+        }
+
+        // 显示抽到的卡牌
+        function showDrawnCard(card, isNew) {
+            elements.cardDisplay.innerHTML = '';
+            elements.cardDisplay.classList.add('card-animation');
+            
+            const cardImg = document.createElement('img');
+            cardImg.src = card.image;
+            cardImg.alt = card.name;
+            cardImg.className = 'card-image';
+            cardImg.onerror = function() {
+                // 如果图片加载失败，显示占位符
+                this.style.display = 'none';
+                const placeholder = document.createElement('div');
+                placeholder.className = 'card-placeholder';
+                placeholder.innerHTML = `
+                    <div style="font-size: 12px; margin-bottom: 5px;">${card.name}</div>
+                    <div style="font-size: 10px; color: #ff6b6b;">${card.rarity}</div>
+                    ${isNew ? '<div class="new-card-badge">新!</div>' : ''}
+                `;
+                elements.cardDisplay.appendChild(placeholder);
+            };
+            
+            elements.cardDisplay.appendChild(cardImg);
+            
+            if (isNew) {
+                const newBadge = document.createElement('div');
+                newBadge.className = 'new-card-badge';
+                newBadge.textContent = '新!';
+                elements.cardDisplay.appendChild(newBadge);
+                
+                // 显示获得新卡的通知
+                showSparkNotification(0, `获得新卡牌: ${card.name} (${card.rarity})`);
+            }
+
+            // 移除动画类，以便下次可以重新添加
+            setTimeout(() => {
+                elements.cardDisplay.classList.remove('card-animation');
+            }, 800);
+        }
+
+        // 更新卡牌展示
+        function updateCardDisplay() {
+            if (appState.collectedCards.length > 0) {
+                // 显示最后获得的卡牌
+                const lastCardId = appState.collectedCards[appState.collectedCards.length - 1];
+                const lastCard = findCardById(lastCardId);
+                if (lastCard) {
+                    elements.cardDisplay.innerHTML = '';
+                    const cardImg = document.createElement('img');
+                    cardImg.src = lastCard.image;
+                    cardImg.alt = lastCard.name;
+                    cardImg.className = 'card-image';
+                    elements.cardDisplay.appendChild(cardImg);
+                }
+            }
+        }
+
+        // 更新收集统计
+        function updateCollectionStats() {
+            const total = getAllCards().length;
+            const collected = appState.collectedCards.length;
+            
+            elements.collectedCount.textContent = collected;
+            elements.totalCards.textContent = total;
+            
+            // 更新总进度
+            const progress = total > 0 ? Math.round((collected / total) * 100) : 0;
+            elements.totalProgress.textContent = `${progress}%`;
+            
+            // 更新抽卡按钮状态
+            elements.gachaBtn.disabled = appState.sparks < 1.0;
+        }
+
+        // 渲染收集册
+        function renderCollection() {
+            elements.collectionContainer.innerHTML = '';
+            
+            for (const seriesId in cardData) {
+                const series = cardData[seriesId];
+                const seriesDiv = document.createElement('div');
+                seriesDiv.className = 'collection-series';
+                
+                // 计算系列进度
+                const seriesCards = series.cards;
+                const collectedInSeries = seriesCards.filter(card => 
+                    appState.collectedCards.includes(card.id)
+                ).length;
+                const seriesProgress = Math.round((collectedInSeries / seriesCards.length) * 100);
+                
+                seriesDiv.innerHTML = `
+                    <div class="series-header">
+                        <div class="series-title">${series.name}</div>
+                        <div class="series-progress">${collectedInSeries}/${seriesCards.length} (${seriesProgress}%)</div>
+                    </div>
+                    <div class="cards-grid" id="grid-${seriesId}">
+                        <!-- 卡牌将通过JS动态添加 -->
+                    </div>
+                `;
+                
+                elements.collectionContainer.appendChild(seriesDiv);
+                
+                // 添加卡牌到网格
+                const grid = document.getElementById(`grid-${seriesId}`);
+                seriesCards.forEach(card => {
+                    const cardDiv = document.createElement('div');
+                    const isObtained = appState.collectedCards.includes(card.id);
+                    
+                    cardDiv.className = `collection-card ${isObtained ? 'obtained' : ''}`;
+                    
+                    if (isObtained) {
+                        cardDiv.innerHTML = `
+                            <img src="${card.image}" alt="${card.name}" class="card-image">
+                            <div style="position: absolute; bottom: 5px; left: 5px; right: 5px; background: rgba(0,0,0,0.7); color: white; padding: 2px 5px; border-radius: 4px; font-size: 10px; text-align: center;">
+                                ${card.name}
+                            </div>
+                        `;
+                    } else {
+                        cardDiv.innerHTML = `
+                            <div class="card-locked">
+                                <i class="fas fa-lock"></i>
+                            </div>
+                            <div style="position: absolute; bottom: 5px; left: 5px; right: 5px; background: rgba(0,0,0,0.7); color: white; padding: 2px 5px; border-radius: 4px; font-size: 10px; text-align: center;">
+                                ???
+                            </div>
+                        `;
+                    }
+                    
+                    grid.appendChild(cardDiv);
+                });
+            }
+        }
+
+        // 辅助函数
+        function getAllCards() {
+            let allCards = [];
+            for (const seriesId in cardData) {
+                allCards = allCards.concat(cardData[seriesId].cards);
+            }
+            return allCards;
+        }
+
+        function findCardById(cardId) {
+            for (const seriesId in cardData) {
+                const card = cardData[seriesId].cards.find(c => c.id === cardId);
+                if (card) return card;
+            }
+            return null;
         }
         
         // 初始化应用
