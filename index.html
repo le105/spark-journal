@@ -838,6 +838,130 @@
             height: 100%;
             object-fit: cover;
         }
+
+        /* 打卡日历样式 */
+        .checkin-calendar {
+            margin-top: 15px;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .calendar-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .calendar-nav {
+            display: flex;
+            gap: 10px;
+        }
+
+        .calendar-nav-btn {
+            background: var(--primary-light);
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+
+        .calendar-day-header {
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-secondary);
+            padding: 5px 0;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .calendar-day.checked {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .calendar-day.today {
+            border: 2px solid var(--primary-color);
+        }
+
+        .calendar-day.other-month {
+            color: #ccc;
+        }
+
+        .calendar-day:hover:not(.other-month) {
+            background-color: var(--primary-light);
+            color: white;
+        }
+
+        .checkin-status {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 15px;
+            padding: 10px 15px;
+            background: var(--primary-light);
+            color: white;
+            border-radius: var(--border-radius);
+        }
+
+        .checkin-btn {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .checkin-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .checkin-btn:active:not(:disabled) {
+            transform: scale(0.95);
+        }
+
+        .streak-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .streak-count {
+            background: var(--warning);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -867,6 +991,10 @@
                     </div>
                     <div class="ai-text" id="ai-text">
                         欢迎使用Spark Journal！开始记录你的第一个作品吧！
+                    </div>
+                    <div class="checkin-status" id="checkin-status">
+                        <span id="checkin-text">今日打卡未完成</span>
+                        <button class="checkin-btn" id="checkin-btn">打卡</button>
                     </div>
                     <div class="ai-hint">
                         <i class="fas fa-sync-alt"></i> 点击刷新激励语
@@ -945,13 +1073,22 @@
                             <div class="stat-label">已完成</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-value" id="avg-rating">0.0</div>
-                            <div class="stat-label">平均评分</div>
-                        </div>
-                        <div class="stat-card">
                             <div class="stat-value" id="total-sparks">0.0</div>
                             <div class="stat-label">总火花数</div>
                         </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="streak-days">0</div>
+                            <div class="stat-label">连续打卡</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h2 class="section-title">
+                        <i class="fas fa-calendar-check"></i> 打卡日历
+                    </h2>
+                    <div class="checkin-calendar" id="checkin-calendar">
+                        <!-- 打卡日历将通过JS动态生成 -->
                     </div>
                 </div>
                 
@@ -989,7 +1126,7 @@
                             <div class="card-placeholder">点击抽卡获得第一张卡牌！</div>
                         </div>
                         
-                        <div class="gacha-cost">
+                        <div class="gacha-cost" id="gacha-cost">
                             <span class="spark-icon">🔥</span>
                             <span>1.0 火花</span>
                         </div>
@@ -1154,7 +1291,7 @@
             driver: [localforage.INDEXEDDB, localforage.WEBSQL, localforage.LOCALSTORAGE]
         });
 
-        // 奶茶鼠风格AI激励语库
+        // 奶茶鼠风格AI激励语库 - 增加打卡相关内容
         const milkTeaMotivations = {
             welcome: [
                 "欢迎来到Spark Journal啦~ 我是奶茶鼠nia！🥤",
@@ -1194,6 +1331,13 @@
                 "完成作品就像喝完一杯奶茶，满足感爆棚！",
                 "nia 你的进度让奶茶鼠想喝杯奶茶庆祝一下！",
                 "专注时间到！奶茶鼠给你加油，像加珍珠一样加把劲！"
+            ],
+            checkin: [
+                "今天打卡了吗？打卡可以获得连续奖励哦~ nia！",
+                "连续打卡三天可以免费抽卡一次，奶茶鼠帮你记着呢！",
+                "打卡就像每天喝奶茶一样，养成习惯就好啦！🥤",
+                "你的连续打卡天数已经{streakDays}天了，太棒啦！",
+                "别忘了打卡哦，奶茶鼠在日历上等着给你画勾勾呢~"
             ]
         };
         
@@ -1232,7 +1376,13 @@
                 timeLeft: 25 * 60, // 25分钟，以秒为单位
                 interval: null
             },
-            collectedCards: []
+            collectedCards: [],
+            checkinData: {
+                dates: [], // 已打卡日期
+                streak: 0, // 连续打卡天数
+                lastCheckin: null, // 最后打卡日期
+                freeGachaCount: 0 // 免费抽卡次数
+            }
         };
         
         // DOM元素
@@ -1255,8 +1405,8 @@
             claimSparks: document.getElementById('claim-sparks'),
             totalItems: document.getElementById('total-items'),
             completedItems: document.getElementById('completed-items'),
-            avgRating: document.getElementById('avg-rating'),
             totalSparks: document.getElementById('total-sparks'),
+            streakDays: document.getElementById('streak-days'),
             typeChart: document.getElementById('type-chart'),
             statusChart: document.getElementById('status-chart'),
             rewardButtons: document.querySelectorAll('[data-cost]'),
@@ -1265,12 +1415,17 @@
             aiText: document.getElementById('ai-text'),
             aiAvatar: document.getElementById('ai-avatar'),
             gachaBtn: document.getElementById('gacha-btn'),
+            gachaCost: document.getElementById('gacha-cost'),
             cardDisplay: document.getElementById('card-display'),
             collectedCount: document.getElementById('collected-count'),
             totalCards: document.getElementById('total-cards'),
             collectionContainer: document.getElementById('collection-container'),
             totalProgress: document.getElementById('total-progress'),
-            storageStatus: document.getElementById('storage-status')
+            storageStatus: document.getElementById('storage-status'),
+            checkinCalendar: document.getElementById('checkin-calendar'),
+            checkinStatus: document.getElementById('checkin-status'),
+            checkinText: document.getElementById('checkin-text'),
+            checkinBtn: document.getElementById('checkin-btn')
         };
         
         // 初始化应用
@@ -1284,6 +1439,8 @@
             updateStats();
             updateAIMotivation();
             initCardSystem();
+            renderCheckinCalendar();
+            updateCheckinStatus();
             
             // 显示存储状态
             showStorageStatus("数据加载完成！");
@@ -1295,10 +1452,12 @@
                 const items = await storage.getItem('items');
                 const sparks = await storage.getItem('sparks');
                 const collectedCards = await storage.getItem('collectedCards');
+                const checkinData = await storage.getItem('checkinData');
                 
                 if (items) appState.items = items;
                 if (sparks) appState.sparks = parseFloat(sparks);
                 if (collectedCards) appState.collectedCards = collectedCards;
+                if (checkinData) appState.checkinData = checkinData;
                 
                 console.log("数据加载成功");
             } catch (error) {
@@ -1313,6 +1472,7 @@
                 await storage.setItem('items', appState.items);
                 await storage.setItem('sparks', appState.sparks.toString());
                 await storage.setItem('collectedCards', appState.collectedCards);
+                await storage.setItem('checkinData', appState.checkinData);
                 console.log("数据保存成功");
                 return true;
             } catch (error) {
@@ -1349,6 +1509,9 @@
             
             // AI激励卡片点击事件
             elements.aiMotivation.addEventListener('click', updateAIMotivation);
+            
+            // 打卡按钮点击事件
+            elements.checkinBtn.addEventListener('click', handleCheckin);
             
             // 模态框
             elements.addItemBtn.addEventListener('click', () => {
@@ -1415,6 +1578,7 @@
             updateCardDisplay();
             updateCollectionStats();
             renderCollection();
+            updateGachaButton();
             
             // 抽卡按钮事件
             elements.gachaBtn.addEventListener('click', drawCard);
@@ -1441,7 +1605,8 @@
                     ...milkTeaMotivations.progress,
                     ...milkTeaMotivations.encouragement, 
                     ...milkTeaMotivations.humorous,
-                    ...milkTeaMotivations.milkTeaThemed
+                    ...milkTeaMotivations.milkTeaThemed,
+                    ...milkTeaMotivations.checkin
                 ];
             }
             
@@ -1454,7 +1619,8 @@
                 .replace('{doingCount}', doingCount)
                 .replace('{totalHours}', totalHours)
                 .replace('{sparks}', appState.sparks.toFixed(1))
-                .replace('{avgRating}', avgRating);
+                .replace('{avgRating}', avgRating)
+                .replace('{streakDays}', appState.checkinData.streak);
             
             elements.aiText.textContent = finalMotivation;
             
@@ -1521,6 +1687,7 @@
             // 如果是统计页面，更新统计数据
             if (pageId === 'stats-page') {
                 updateStats();
+                renderCheckinCalendar();
             }
             
             // 如果是收集册页面，更新收集册
@@ -1804,15 +1971,11 @@
             const completedCount = appState.items.filter(item => item.status === '已完成！').length;
             elements.completedItems.textContent = completedCount;
             
-            // 平均评分
-            const ratedItems = appState.items.filter(item => item.rating);
-            const avgRating = ratedItems.length > 0 ? 
-                (ratedItems.reduce((sum, item) => sum + item.rating, 0) / ratedItems.length).toFixed(1) : 
-                '0.0';
-            elements.avgRating.textContent = avgRating;
-            
             // 总火花数
             elements.totalSparks.textContent = appState.sparks.toFixed(1);
+            
+            // 连续打卡天数
+            elements.streakDays.textContent = appState.checkinData.streak;
             
             // 类型分布
             updateTypeChart();
@@ -1899,18 +2062,30 @@
 
         // 抽卡功能
         async function drawCard() {
-            if (appState.sparks < 1.0) {
+            // 检查是否有免费抽卡次数
+            let useFreeGacha = false;
+            if (appState.checkinData.freeGachaCount > 0) {
+                useFreeGacha = true;
+            }
+            
+            if (!useFreeGacha && appState.sparks < 1.0) {
                 alert('火花不足，无法抽卡！');
                 return;
             }
 
-            if (!confirm('花费1火花抽取一张随机卡牌？')) {
+            if (!useFreeGacha && !confirm('花费1火花抽取一张随机卡牌？')) {
                 return;
             }
 
-            // 扣除火花
-            appState.sparks -= 1.0;
-            updateSparkDisplay();
+            // 扣除火花或免费抽卡次数
+            if (useFreeGacha) {
+                appState.checkinData.freeGachaCount--;
+                updateGachaButton();
+            } else {
+                appState.sparks -= 1.0;
+                updateSparkDisplay();
+            }
+            
             await saveData();
 
             // 随机选择卡牌（按稀有度加权）
@@ -1949,6 +2124,20 @@
             
             // 重新渲染收集册以显示新获得的卡牌
             renderCollection();
+        }
+
+        // 更新抽卡按钮状态
+        function updateGachaButton() {
+            if (appState.checkinData.freeGachaCount > 0) {
+                elements.gachaBtn.innerHTML = '<i class="fas fa-dice"></i> 免费抽一次';
+                elements.gachaCost.innerHTML = '<span class="spark-icon">🎁</span><span>免费抽卡</span>';
+            } else {
+                elements.gachaBtn.innerHTML = '<i class="fas fa-dice"></i> 抽一次';
+                elements.gachaCost.innerHTML = '<span class="spark-icon">🔥</span><span>1.0 火花</span>';
+            }
+            
+            // 更新按钮禁用状态
+            elements.gachaBtn.disabled = appState.sparks < 1.0 && appState.checkinData.freeGachaCount === 0;
         }
 
         // 显示抽到的卡牌
@@ -2062,7 +2251,7 @@
             elements.totalProgress.textContent = `${progress}%`;
             
             // 更新抽卡按钮状态
-            elements.gachaBtn.disabled = appState.sparks < 1.0;
+            updateGachaButton();
         }
 
         // 渲染收集册
@@ -2170,7 +2359,192 @@
             }
         }
 
+        // 打卡功能
+        function handleCheckin() {
+            const today = new Date();
+            const todayStr = formatDate(today);
+            
+            // 检查今天是否已经打卡
+            if (appState.checkinData.dates.includes(todayStr)) {
+                alert('今天已经打卡过了！');
+                return;
+            }
+            
+            // 添加打卡日期
+            appState.checkinData.dates.push(todayStr);
+            appState.checkinData.lastCheckin = todayStr;
+            
+            // 更新连续打卡天数
+            updateStreak();
+            
+            // 检查是否达到连续打卡三天奖励
+            if (appState.checkinData.streak >= 3) {
+                appState.checkinData.freeGachaCount++;
+                updateGachaButton();
+                alert(`连续打卡${appState.checkinData.streak}天，获得一次免费抽卡机会！`);
+            }
+            
+            // 保存数据
+            saveData();
+            
+            // 更新UI
+            updateCheckinStatus();
+            renderCheckinCalendar();
+            updateStats();
+            updateAIMotivation();
+            
+            // 显示打卡成功通知（不显示火花奖励）
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.innerHTML = `
+                <i class="fas fa-calendar-check"></i>
+                <div>
+                    <div>打卡成功</div>
+                    <div style="font-size: 12px;">连续打卡${appState.checkinData.streak}天</div>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                if (document.body.contains(notification)) {
+                    document.body.removeChild(notification);
+                }
+            }, 3000);
+        }
+        
+        // 更新连续打卡天数
+        function updateStreak() {
+            const dates = appState.checkinData.dates.sort();
+            let streak = 0;
+            
+            // 如果今天已经打卡，从今天开始计算
+            const today = new Date();
+            const todayStr = formatDate(today);
+            
+            if (appState.checkinData.dates.includes(todayStr)) {
+                streak = 1;
+                
+                // 检查之前的连续天数
+                let checkDate = new Date(today);
+                for (let i = 1; i <= 30; i++) { // 最多检查30天
+                    checkDate.setDate(checkDate.getDate() - 1);
+                    const checkDateStr = formatDate(checkDate);
+                    
+                    if (appState.checkinData.dates.includes(checkDateStr)) {
+                        streak++;
+                    } else {
+                        break;
+                    }
+                }
+            }
+            
+            appState.checkinData.streak = streak;
+        }
+        
+        // 更新打卡状态显示
+        function updateCheckinStatus() {
+            const today = new Date();
+            const todayStr = formatDate(today);
+            const hasCheckedIn = appState.checkinData.dates.includes(todayStr);
+            
+            if (hasCheckedIn) {
+                elements.checkinText.textContent = "今日打卡已完成";
+                elements.checkinBtn.disabled = true;
+                elements.checkinBtn.textContent = "已打卡";
+            } else {
+                elements.checkinText.textContent = "今日打卡未完成";
+                elements.checkinBtn.disabled = false;
+                elements.checkinBtn.textContent = "打卡";
+            }
+        }
+        
+        // 渲染打卡日历
+        function renderCheckinCalendar() {
+            const today = new Date();
+            const currentMonth = today.getMonth();
+            const currentYear = today.getFullYear();
+            
+            // 获取当前月的第一天
+            const firstDay = new Date(currentYear, currentMonth, 1);
+            // 获取当前月的最后一天
+            const lastDay = new Date(currentYear, currentMonth + 1, 0);
+            
+            // 获取当前月的第一天是星期几（0是星期日）
+            const firstDayOfWeek = firstDay.getDay();
+            
+            // 获取上个月的最后几天
+            const prevMonthLastDay = new Date(currentYear, currentMonth, 0).getDate();
+            
+            let calendarHTML = `
+                <div class="calendar-header">
+                    <div class="calendar-title">${currentYear}年${currentMonth + 1}月</div>
+                    <div class="calendar-nav">
+                        <button class="calendar-nav-btn" id="prev-month"><i class="fas fa-chevron-left"></i></button>
+                        <button class="calendar-nav-btn" id="next-month"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                </div>
+                <div class="calendar-grid">
+                    <div class="calendar-day-header">日</div>
+                    <div class="calendar-day-header">一</div>
+                    <div class="calendar-day-header">二</div>
+                    <div class="calendar-day-header">三</div>
+                    <div class="calendar-day-header">四</div>
+                    <div class="calendar-day-header">五</div>
+                    <div class="calendar-day-header">六</div>
+            `;
+            
+            // 添加上个月的日期
+            for (let i = firstDayOfWeek - 1; i >= 0; i--) {
+                const day = prevMonthLastDay - i;
+                calendarHTML += `<div class="calendar-day other-month">${day}</div>`;
+            }
+            
+            // 添加当前月的日期
+            for (let day = 1; day <= lastDay.getDate(); day++) {
+                const dateStr = formatDate(new Date(currentYear, currentMonth, day));
+                const isToday = formatDate(today) === dateStr;
+                const isChecked = appState.checkinData.dates.includes(dateStr);
+                
+                let dayClass = 'calendar-day';
+                if (isToday) dayClass += ' today';
+                if (isChecked) dayClass += ' checked';
+                
+                calendarHTML += `<div class="${dayClass}">${day}</div>`;
+            }
+            
+            // 添加下个月的日期
+            const totalCells = 42; // 6行 * 7列
+            const remainingCells = totalCells - (firstDayOfWeek + lastDay.getDate());
+            
+            for (let day = 1; day <= remainingCells; day++) {
+                calendarHTML += `<div class="calendar-day other-month">${day}</div>`;
+            }
+            
+            calendarHTML += '</div>';
+            
+            elements.checkinCalendar.innerHTML = calendarHTML;
+            
+            // 添加月份导航事件
+            document.getElementById('prev-month').addEventListener('click', () => {
+                // 这里可以添加切换月份的逻辑
+                alert('月份切换功能待实现');
+            });
+            
+            document.getElementById('next-month').addEventListener('click', () => {
+                // 这里可以添加切换月份的逻辑
+                alert('月份切换功能待实现');
+            });
+        }
+        
         // 辅助函数
+        function formatDate(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+        
         function getAllCards() {
             let allCards = [];
             for (const seriesId in cardData) {
