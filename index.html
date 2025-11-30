@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spark Journal - 个人媒体记录</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/localforage@1.10.0/dist/localforage.min.js"></script>
     <style>
         :root {
             --primary-color: #6c5ce7;
@@ -20,6 +21,12 @@
             --border-radius: 12px;
             --shadow: 0 2px 10px rgba(0,0,0,0.08);
             --transition: all 0.3s ease;
+            
+            /* 稀有度颜色 */
+            --common-color: #b0b0b0;
+            --rare-color: #4d7fff;
+            --epic-color: #8a2be2;
+            --legendary-color: #ff9900;
         }
 
         * {
@@ -295,6 +302,7 @@
             box-shadow: var(--shadow);
             position: relative;
             overflow: hidden;
+            cursor: pointer;
         }
 
         .ai-motivation::before {
@@ -322,6 +330,15 @@
         .ai-icon {
             font-size: 24px;
             margin-right: 10px;
+        }
+
+        .ai-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+            border: 2px solid white;
         }
 
         .ai-text {
@@ -635,6 +652,7 @@
             overflow: hidden;
             position: relative;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
         }
 
         .collection-card.obtained .card-image {
@@ -656,6 +674,49 @@
             transform: translate(-50%, -50%);
             color: #999;
             font-size: 24px;
+        }
+
+        /* 稀有度边框样式 */
+        .rarity-common {
+            border: 2px solid var(--common-color);
+        }
+
+        .rarity-rare {
+            border: 2px solid var(--rare-color);
+            box-shadow: 0 0 8px var(--rare-color);
+        }
+
+        .rarity-epic {
+            border: 2px solid transparent;
+            background: linear-gradient(45deg, var(--epic-color), #ff69b4) border-box;
+            box-shadow: 0 0 12px rgba(138, 43, 226, 0.5);
+        }
+
+        .rarity-legendary {
+            border: 2px solid var(--legendary-color);
+            animation: glow 2s infinite alternate;
+            box-shadow: 0 0 15px rgba(255, 153, 0, 0.7);
+        }
+
+        @keyframes glow {
+            from {
+                box-shadow: 0 0 5px var(--legendary-color);
+            }
+            to {
+                box-shadow: 0 0 20px var(--legendary-color);
+            }
+        }
+
+        .rarity-badge {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: bold;
         }
 
         /* 抽卡动画 */
@@ -685,10 +746,28 @@
             font-size: 12px;
             font-weight: bold;
         }
+
+        /* 存储状态提示 */
+        .storage-status {
+            position: fixed;
+            bottom: 70px;
+            left: 0;
+            right: 0;
+            background: var(--warning);
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-size: 14px;
+            z-index: 99;
+            display: none;
+        }
     </style>
 </head>
 <body>
     <div class="app-container">
+        <!-- 存储状态提示 -->
+        <div class="storage-status" id="storage-status"></div>
+        
         <!-- 顶部导航 -->
         <header class="app-header">
             <div class="app-title">Spark Journal</div>
@@ -704,8 +783,8 @@
             <div class="ai-motivation" id="ai-motivation">
                 <div class="ai-content">
                     <div class="ai-header">
-                        <i class="fas fa-robot ai-icon"></i>
-                        <h3>AI激励助手</h3>
+                        <img src="" alt="奶茶鼠头像" class="ai-avatar" id="ai-avatar">
+                        <h3>奶茶鼠助手</h3>
                     </div>
                     <div class="ai-text" id="ai-text">
                         欢迎使用Spark Journal！开始记录你的第一个作品吧！
@@ -990,43 +1069,59 @@
     </div>
 
     <script>
-        // AI激励语库
-        const aiMotivations = {
+        // 初始化localForage
+        const storage = localforage.createInstance({
+            name: 'SparkJournal',
+            driver: [localforage.INDEXEDDB, localforage.WEBSQL, localforage.LOCALSTORAGE]
+        });
+
+        // 奶茶鼠风格AI激励语库
+        const milkTeaMotivations = {
             welcome: [
-                "欢迎使用Spark Journal！开始记录你的第一个作品吧！",
-                "准备好记录你的游戏、书籍和影视作品了吗？",
-                "火花等待被你点燃，开始你的创作之旅吧！"
+                "欢迎来到Spark Journal啦~ 我是奶茶鼠nia！🥤",
+                "准备好和奶茶鼠一起记录精彩作品了吗？nia",
+                "来啦来啦~ 奶茶鼠带着火花和鼓励出现啦nia！",
+                "嗨~ 我是奶茶鼠nia，我们一起让自律变得有趣吧！🥤✨"
             ],
             empty: [
-                "你的作品库空空如也，是时候添加一些内容了！",
-                "没有记录的作品就像没有星星的夜空，添加一些吧！",
-                "开始建立你的个人媒体库，记录每一个精彩瞬间！"
+                "你的作品库空空如也，快加点东西进去吧，nia",
+                "没有记录的作品就像没有珍珠的奶茶，加点料吧！🥤",
+                "nia 作品库空空的，奶茶鼠有点寂寞呢...",
+                "快添加第一个作品吧，奶茶鼠已经等不及要看啦！"
             ],
             progress: [
-                "你已经完成了{completed}部作品！继续保持这个势头！",
-                "专注{totalHours}小时，获得了{sparks}火花，太棒了！",
-                "你的{completed}部已完成作品证明了你的坚持！"
+                "哇~ 你已经完成了{completed}部作品！继续保持这个势头，nia！",
+                "专注{totalHours}小时，获得了{sparks}火花，太厉害啦！🥤",
+                "你的{completed}部已完成作品证明了你的坚持，奶茶鼠为你骄傲！",
+                "吱吱~ {completed}部作品完成啦！像奶茶里的珍珠一样多呢！"
             ],
             encouragement: [
-                "专注25分钟就能获得0.1火花，每一分钟都算数！",
-                "完成一部作品可以获得1火花，比专注更有效率！",
-                "你的{doingCount}部进行中作品正在等待完成！",
-                "平均评分{avgRating}，说明你很有品味呢！",
-                "火花已经积累到{sparks}了，离奖励越来越近了！"
+                "专注25分钟就能获得0.1火花，每一分钟都像奶茶一样香甜！",
+                "完成一部作品可以获得1火花，比专注更有效率喔~ nia！",
+                "你的{doingCount}部进行中作品正在等待完成，加油啦！",
+                "平均评分{avgRating}，说明你很有品味呢，像选奶茶一样准！",
+                "火花已经积累到{sparks}了，离奖励越来越近了，nia~"
             ],
             humorous: [
-                "别让想试列表越来越长，完成列表却一动不动！",
-                "你的专注时间比刷短视频的时间还少？我不信！",
-                "完成一部作品获得的火花，够你刷2.5小时短视频呢！",
-                "你的{doingCount}部进行中作品说：'选我！选我！'",
-                "火花不会自己增加，但拖延症会自己发作！"
+                "别让想试列表越来越长，完成列表却一动不动！抗议nia！",
+                "你的专注时间比刷短视频的时间还少？奶茶鼠不信！🥤",
+                "完成一部作品获得的火花，够你刷1小时短视频呢，划算吧！",
+                "你的{doingCount}部进行中作品说：'选我！选我！' nia",
+                "火花不会自己增加，但拖延症会自己发作！奶茶鼠提醒你~"
+            ],
+            milkTeaThemed: [
+                "你的火花像珍珠奶茶里的珍珠一样多啦~ 开心nia！",
+                "每一点专注都像奶茶里的糖分，让生活更甜美！🥤",
+                "完成作品就像喝完一杯奶茶，满足感爆棚！",
+                "nia 你的进度让奶茶鼠想喝杯奶茶庆祝一下！",
+                "专注时间到！奶茶鼠给你加油，像加珍珠一样加把劲！"
             ]
         };
         
         // 卡牌数据
         const cardData = {
             series1: {
-                name: "火花鼠系列",
+                name: "奶茶鼠系列",
                 cards: [
                     { id: "series1_01", name: "泡泡", image: "images/cards/series1/card1.jpg", rarity: "普通" },
                     { id: "series1_02", name: "崩溃", image: "images/cards/series1/card2.jpg", rarity: "普通" },
@@ -1051,14 +1146,14 @@
 
         // 应用状态和数据
         const appState = {
-            items: JSON.parse(localStorage.getItem('sparkjournal_items')) || [],
-            sparks: parseFloat(localStorage.getItem('sparkjournal_sparks')) || 0.0,
+            items: [],
+            sparks: 0.0,
             timer: {
                 isRunning: false,
                 timeLeft: 25 * 60, // 25分钟，以秒为单位
                 interval: null
             },
-            collectedCards: JSON.parse(localStorage.getItem('sparkjournal_cards')) || []
+            collectedCards: []
         };
         
         // DOM元素
@@ -1089,22 +1184,73 @@
             addCustomReward: document.getElementById('add-custom-reward'),
             aiMotivation: document.getElementById('ai-motivation'),
             aiText: document.getElementById('ai-text'),
+            aiAvatar: document.getElementById('ai-avatar'),
             gachaBtn: document.getElementById('gacha-btn'),
             cardDisplay: document.getElementById('card-display'),
             collectedCount: document.getElementById('collected-count'),
             totalCards: document.getElementById('total-cards'),
             collectionContainer: document.getElementById('collection-container'),
-            totalProgress: document.getElementById('total-progress')
+            totalProgress: document.getElementById('total-progress'),
+            storageStatus: document.getElementById('storage-status')
         };
         
         // 初始化应用
-        function initApp() {
+        async function initApp() {
+            // 从存储加载数据
+            await loadData();
+            
             updateSparkDisplay();
             renderItems();
             setupEventListeners();
             updateStats();
             updateAIMotivation();
             initCardSystem();
+            
+            // 显示存储状态
+            showStorageStatus("数据加载完成！");
+        }
+        
+        // 从存储加载数据
+        async function loadData() {
+            try {
+                const items = await storage.getItem('items');
+                const sparks = await storage.getItem('sparks');
+                const collectedCards = await storage.getItem('collectedCards');
+                
+                if (items) appState.items = items;
+                if (sparks) appState.sparks = parseFloat(sparks);
+                if (collectedCards) appState.collectedCards = collectedCards;
+                
+                console.log("数据加载成功");
+            } catch (error) {
+                console.error("加载数据失败:", error);
+                showStorageStatus("加载数据失败，使用默认数据");
+            }
+        }
+        
+        // 保存数据到存储
+        async function saveData() {
+            try {
+                await storage.setItem('items', appState.items);
+                await storage.setItem('sparks', appState.sparks.toString());
+                await storage.setItem('collectedCards', appState.collectedCards);
+                console.log("数据保存成功");
+                return true;
+            } catch (error) {
+                console.error("保存数据失败:", error);
+                showStorageStatus("保存数据失败，请检查存储空间");
+                return false;
+            }
+        }
+        
+        // 显示存储状态
+        function showStorageStatus(message) {
+            elements.storageStatus.textContent = message;
+            elements.storageStatus.style.display = 'block';
+            
+            setTimeout(() => {
+                elements.storageStatus.style.display = 'none';
+            }, 3000);
         }
         
         // 设置事件监听器
@@ -1208,14 +1354,15 @@
             let motivationPool = [];
             
             if (appState.items.length === 0) {
-                motivationPool = aiMotivations.empty;
+                motivationPool = milkTeaMotivations.empty;
             } else if (completedCount === 0) {
-                motivationPool = [...aiMotivations.encouragement, ...aiMotivations.humorous];
+                motivationPool = [...milkTeaMotivations.encouragement, ...milkTeaMotivations.humorous];
             } else {
                 motivationPool = [
-                    ...aiMotivations.progress,
-                    ...aiMotivations.encouragement, 
-                    ...aiMotivations.humorous
+                    ...milkTeaMotivations.progress,
+                    ...milkTeaMotivations.encouragement, 
+                    ...milkTeaMotivations.humorous,
+                    ...milkTeaMotivations.milkTeaThemed
                 ];
             }
             
@@ -1231,6 +1378,28 @@
                 .replace('{avgRating}', avgRating);
             
             elements.aiText.textContent = finalMotivation;
+            
+            // 随机设置AI头像（使用已收集的卡牌）
+            updateAIAvatar();
+        }
+        
+        // 更新AI头像
+        function updateAIAvatar() {
+            if (appState.collectedCards.length > 0) {
+                // 从已收集的卡牌中随机选择一个作为头像
+                const randomCardId = appState.collectedCards[Math.floor(Math.random() * appState.collectedCards.length)];
+                const card = findCardById(randomCardId);
+                
+                if (card) {
+                    // 这里使用卡牌名称作为头像占位，实际应用中可以使用卡牌图片
+                    elements.aiAvatar.alt = card.name;
+                    // 在实际应用中，这里可以设置头像图片URL
+                    // elements.aiAvatar.src = card.image;
+                }
+            } else {
+                // 默认头像
+                elements.aiAvatar.alt = "奶茶鼠";
+            }
         }
         
         // 切换页面
@@ -1259,7 +1428,7 @@
         }
         
         // 处理表单提交
-        function handleFormSubmit(e) {
+        async function handleFormSubmit(e) {
             e.preventDefault();
             
             const title = document.getElementById('item-title').value;
@@ -1293,7 +1462,7 @@
                 if (oldStatus === '在搞' && status === '已完成！') {
                     appState.sparks += 1.0;
                     updateSparkDisplay();
-                    saveSparks();
+                    await saveData();
                     showSparkNotification(1.0, "完成作品奖励");
                 }
                 
@@ -1314,28 +1483,13 @@
                 appState.items.push(newItem);
             }
             
-            saveItems();
+            await saveData();
             renderItems();
             updateAIMotivation();
             
             // 重置表单并关闭模态框
             elements.itemForm.reset();
             elements.addItemModal.style.display = 'none';
-        }
-        
-        // 保存作品数据到localStorage
-        function saveItems() {
-            localStorage.setItem('sparkjournal_items', JSON.stringify(appState.items));
-        }
-        
-        // 保存火花数据到localStorage
-        function saveSparks() {
-            localStorage.setItem('sparkjournal_sparks', appState.sparks.toString());
-        }
-
-        // 保存收集的卡牌数据
-        function saveCollectedCards() {
-            localStorage.setItem('sparkjournal_cards', JSON.stringify(appState.collectedCards));
         }
         
         // 渲染作品列表
@@ -1527,10 +1681,10 @@
             elements.timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         }
         
-        function claimSparks() {
+        async function claimSparks() {
             appState.sparks += 0.1;
             updateSparkDisplay();
-            saveSparks();
+            await saveData();
             showSparkNotification(0.1, "专注奖励");
             updateAIMotivation();
             resetTimer();
@@ -1623,7 +1777,7 @@
         }
         
         // 兑换奖励
-        function redeemReward(cost, rewardName) {
+        async function redeemReward(cost, rewardName) {
             if (appState.sparks < cost) {
                 alert('火花不足，无法兑换此奖励！');
                 return;
@@ -1632,14 +1786,14 @@
             if (confirm(`确定要花费 ${cost} 火花兑换"${rewardName}"吗？`)) {
                 appState.sparks -= cost;
                 updateSparkDisplay();
-                saveSparks();
+                await saveData();
                 updateAIMotivation();
                 alert(`成功兑换 ${rewardName}！`);
             }
         }
 
         // 抽卡功能
-        function drawCard() {
+        async function drawCard() {
             if (appState.sparks < 1.0) {
                 alert('火花不足，无法抽卡！');
                 return;
@@ -1652,7 +1806,7 @@
             // 扣除火花
             appState.sparks -= 1.0;
             updateSparkDisplay();
-            saveSparks();
+            await saveData();
 
             // 随机选择卡牌（按稀有度加权）
             const allCards = getAllCards();
@@ -1678,7 +1832,7 @@
             
             if (isNewCard) {
                 appState.collectedCards.push(drawnCard.id);
-                saveCollectedCards();
+                await saveData();
             }
 
             // 显示抽到的卡牌
@@ -1694,24 +1848,31 @@
             elements.cardDisplay.innerHTML = '';
             elements.cardDisplay.classList.add('card-animation');
             
-            const cardImg = document.createElement('img');
-            cardImg.src = card.image;
-            cardImg.alt = card.name;
-            cardImg.className = 'card-image';
-            cardImg.onerror = function() {
-                // 如果图片加载失败，显示占位符
-                this.style.display = 'none';
-                const placeholder = document.createElement('div');
-                placeholder.className = 'card-placeholder';
-                placeholder.innerHTML = `
-                    <div style="font-size: 12px; margin-bottom: 5px;">${card.name}</div>
-                    <div style="font-size: 10px; color: #ff6b6b;">${card.rarity}</div>
-                    ${isNew ? '<div class="new-card-badge">新!</div>' : ''}
-                `;
-                elements.cardDisplay.appendChild(placeholder);
-            };
+            // 根据稀有度添加边框类
+            const rarityClass = getRarityClass(card.rarity);
+            elements.cardDisplay.className = `card-display ${rarityClass}`;
             
-            elements.cardDisplay.appendChild(cardImg);
+            const cardContent = document.createElement('div');
+            cardContent.className = 'card-content';
+            cardContent.style.width = '100%';
+            cardContent.style.height = '100%';
+            cardContent.style.display = 'flex';
+            cardContent.style.flexDirection = 'column';
+            cardContent.style.alignItems = 'center';
+            cardContent.style.justifyContent = 'center';
+            cardContent.style.padding = '10px';
+            cardContent.style.textAlign = 'center';
+            cardContent.style.background = 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)';
+            cardContent.style.borderRadius = '10px';
+            
+            cardContent.innerHTML = `
+                <div style="font-size: 14px; font-weight: bold; margin-bottom: 5px;">${card.name}</div>
+                <div style="font-size: 12px; color: ${getRarityColor(card.rarity)}; margin-bottom: 10px;">${card.rarity}</div>
+                <div style="font-size: 24px; margin-bottom: 10px;">🐹</div>
+                <div style="font-size: 10px; color: #666;">奶茶鼠系列</div>
+            `;
+            
+            elements.cardDisplay.appendChild(cardContent);
             
             if (isNew) {
                 const newBadge = document.createElement('div');
@@ -1737,12 +1898,36 @@
                 const lastCard = findCardById(lastCardId);
                 if (lastCard) {
                     elements.cardDisplay.innerHTML = '';
-                    const cardImg = document.createElement('img');
-                    cardImg.src = lastCard.image;
-                    cardImg.alt = lastCard.name;
-                    cardImg.className = 'card-image';
-                    elements.cardDisplay.appendChild(cardImg);
+                    
+                    // 根据稀有度添加边框类
+                    const rarityClass = getRarityClass(lastCard.rarity);
+                    elements.cardDisplay.className = `card-display ${rarityClass}`;
+                    
+                    const cardContent = document.createElement('div');
+                    cardContent.className = 'card-content';
+                    cardContent.style.width = '100%';
+                    cardContent.style.height = '100%';
+                    cardContent.style.display = 'flex';
+                    cardContent.style.flexDirection = 'column';
+                    cardContent.style.alignItems = 'center';
+                    cardContent.style.justifyContent = 'center';
+                    cardContent.style.padding = '10px';
+                    cardContent.style.textAlign = 'center';
+                    cardContent.style.background = 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)';
+                    cardContent.style.borderRadius = '10px';
+                    
+                    cardContent.innerHTML = `
+                        <div style="font-size: 14px; font-weight: bold; margin-bottom: 5px;">${lastCard.name}</div>
+                        <div style="font-size: 12px; color: ${getRarityColor(lastCard.rarity)}; margin-bottom: 10px;">${lastCard.rarity}</div>
+                        <div style="font-size: 24px; margin-bottom: 10px;">🐹</div>
+                        <div style="font-size: 10px; color: #666;">奶茶鼠系列</div>
+                    `;
+                    
+                    elements.cardDisplay.appendChild(cardContent);
                 }
+            } else {
+                elements.cardDisplay.innerHTML = '<div class="card-placeholder">点击抽卡获得第一张卡牌！</div>';
+                elements.cardDisplay.className = 'card-display';
             }
         }
 
@@ -1796,14 +1981,19 @@
                     const cardDiv = document.createElement('div');
                     const isObtained = appState.collectedCards.includes(card.id);
                     
-                    cardDiv.className = `collection-card ${isObtained ? 'obtained' : ''}`;
+                    // 根据稀有度添加边框类
+                    const rarityClass = getRarityClass(card.rarity);
+                    
+                    cardDiv.className = `collection-card ${rarityClass} ${isObtained ? 'obtained' : ''}`;
                     
                     if (isObtained) {
                         cardDiv.innerHTML = `
-                            <img src="${card.image}" alt="${card.name}" class="card-image">
-                            <div style="position: absolute; bottom: 5px; left: 5px; right: 5px; background: rgba(0,0,0,0.7); color: white; padding: 2px 5px; border-radius: 4px; font-size: 10px; text-align: center;">
-                                ${card.name}
+                            <div style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; text-align: center;">
+                                <div style="font-size: 12px; font-weight: bold; margin-bottom: 5px;">${card.name}</div>
+                                <div style="font-size: 24px; margin-bottom: 5px;">🐹</div>
+                                <div style="font-size: 10px; color: #666;">奶茶鼠系列</div>
                             </div>
+                            <div class="rarity-badge">${card.rarity}</div>
                         `;
                     } else {
                         cardDiv.innerHTML = `
@@ -1836,6 +2026,28 @@
                 if (card) return card;
             }
             return null;
+        }
+        
+        // 获取稀有度对应的CSS类
+        function getRarityClass(rarity) {
+            switch(rarity) {
+                case '普通': return 'rarity-common';
+                case '稀有': return 'rarity-rare';
+                case '史诗': return 'rarity-epic';
+                case '传说': return 'rarity-legendary';
+                default: return 'rarity-common';
+            }
+        }
+        
+        // 获取稀有度对应的颜色
+        function getRarityColor(rarity) {
+            switch(rarity) {
+                case '普通': return 'var(--common-color)';
+                case '稀有': return 'var(--rare-color)';
+                case '史诗': return 'var(--epic-color)';
+                case '传说': return 'var(--legendary-color)';
+                default: return 'var(--common-color)';
+            }
         }
         
         // 初始化应用
