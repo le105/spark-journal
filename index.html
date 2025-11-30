@@ -653,6 +653,7 @@
             position: relative;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             transition: all 0.3s ease;
+            border: 2px solid transparent; /* 默认透明边框 */
         }
 
         .collection-card.obtained .card-image {
@@ -676,23 +677,45 @@
             font-size: 24px;
         }
 
-        /* 稀有度边框样式 */
-        .rarity-common {
+        /* 稀有度边框样式 - 只在获得卡牌后显示 */
+        .collection-card.obtained.rarity-common {
             border: 2px solid var(--common-color);
         }
 
-        .rarity-rare {
+        .collection-card.obtained.rarity-rare {
             border: 2px solid var(--rare-color);
             box-shadow: 0 0 8px var(--rare-color);
         }
 
-        .rarity-epic {
+        .collection-card.obtained.rarity-epic {
             border: 2px solid transparent;
             background: linear-gradient(45deg, var(--epic-color), #ff69b4) border-box;
             box-shadow: 0 0 12px rgba(138, 43, 226, 0.5);
         }
 
-        .rarity-legendary {
+        .collection-card.obtained.rarity-legendary {
+            border: 2px solid var(--legendary-color);
+            animation: glow 2s infinite alternate;
+            box-shadow: 0 0 15px rgba(255, 153, 0, 0.7);
+        }
+
+        /* 抽卡显示区域的稀有度边框 */
+        .card-display.rarity-common {
+            border: 2px solid var(--common-color);
+        }
+
+        .card-display.rarity-rare {
+            border: 2px solid var(--rare-color);
+            box-shadow: 0 0 8px var(--rare-color);
+        }
+
+        .card-display.rarity-epic {
+            border: 2px solid transparent;
+            background: linear-gradient(45deg, var(--epic-color), #ff69b4) border-box;
+            box-shadow: 0 0 12px rgba(138, 43, 226, 0.5);
+        }
+
+        .card-display.rarity-legendary {
             border: 2px solid var(--legendary-color);
             animation: glow 2s infinite alternate;
             box-shadow: 0 0 15px rgba(255, 153, 0, 0.7);
@@ -760,6 +783,20 @@
             font-size: 14px;
             z-index: 99;
             display: none;
+        }
+
+        /* 卡牌文本内容样式 */
+        .card-text-content {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            text-align: center;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 10px;
         }
     </style>
 </head>
@@ -1118,7 +1155,7 @@
             ]
         };
         
-        // 卡牌数据
+        // 卡牌数据 - 保留图片路径
         const cardData = {
             series1: {
                 name: "奶茶鼠系列",
@@ -1391,10 +1428,7 @@
                 const card = findCardById(randomCardId);
                 
                 if (card) {
-                    // 这里使用卡牌名称作为头像占位，实际应用中可以使用卡牌图片
                     elements.aiAvatar.alt = card.name;
-                    // 在实际应用中，这里可以设置头像图片URL
-                    // elements.aiAvatar.src = card.image;
                 }
             } else {
                 // 默认头像
@@ -1421,6 +1455,11 @@
             // 如果是统计页面，更新统计数据
             if (pageId === 'stats-page') {
                 updateStats();
+            }
+            
+            // 如果是收集册页面，更新收集册
+            if (pageId === 'collection-page') {
+                renderCollection();
             }
             
             // 更新AI激励语
@@ -1841,6 +1880,9 @@
             // 更新统计
             updateCollectionStats();
             updateAIMotivation();
+            
+            // 重新渲染收集册以显示新获得的卡牌
+            renderCollection();
         }
 
         // 显示抽到的卡牌
@@ -1852,27 +1894,36 @@
             const rarityClass = getRarityClass(card.rarity);
             elements.cardDisplay.className = `card-display ${rarityClass}`;
             
-            const cardContent = document.createElement('div');
-            cardContent.className = 'card-content';
-            cardContent.style.width = '100%';
-            cardContent.style.height = '100%';
-            cardContent.style.display = 'flex';
-            cardContent.style.flexDirection = 'column';
-            cardContent.style.alignItems = 'center';
-            cardContent.style.justifyContent = 'center';
-            cardContent.style.padding = '10px';
-            cardContent.style.textAlign = 'center';
-            cardContent.style.background = 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)';
-            cardContent.style.borderRadius = '10px';
+            // 尝试加载图片
+            const cardImg = document.createElement('img');
+            cardImg.src = card.image;
+            cardImg.alt = card.name;
+            cardImg.className = 'card-image';
+            cardImg.onerror = function() {
+                // 如果图片加载失败，显示文本内容
+                this.style.display = 'none';
+                const cardContent = document.createElement('div');
+                cardContent.className = 'card-text-content';
+                
+                cardContent.innerHTML = `
+                    <div style="font-size: 14px; font-weight: bold; margin-bottom: 5px;">${card.name}</div>
+                    <div style="font-size: 12px; color: ${getRarityColor(card.rarity)}; margin-bottom: 10px;">${card.rarity}</div>
+                    <div style="font-size: 24px; margin-bottom: 10px;">🐹</div>
+                    <div style="font-size: 10px; color: #666;">奶茶鼠系列</div>
+                `;
+                
+                elements.cardDisplay.appendChild(cardContent);
+            };
             
-            cardContent.innerHTML = `
-                <div style="font-size: 14px; font-weight: bold; margin-bottom: 5px;">${card.name}</div>
-                <div style="font-size: 12px; color: ${getRarityColor(card.rarity)}; margin-bottom: 10px;">${card.rarity}</div>
-                <div style="font-size: 24px; margin-bottom: 10px;">🐹</div>
-                <div style="font-size: 10px; color: #666;">奶茶鼠系列</div>
-            `;
+            cardImg.onload = function() {
+                // 图片加载成功，移除任何可能存在的文本内容
+                const existingContent = elements.cardDisplay.querySelector('.card-text-content');
+                if (existingContent) {
+                    existingContent.remove();
+                }
+            };
             
-            elements.cardDisplay.appendChild(cardContent);
+            elements.cardDisplay.appendChild(cardImg);
             
             if (isNew) {
                 const newBadge = document.createElement('div');
@@ -1903,27 +1954,28 @@
                     const rarityClass = getRarityClass(lastCard.rarity);
                     elements.cardDisplay.className = `card-display ${rarityClass}`;
                     
-                    const cardContent = document.createElement('div');
-                    cardContent.className = 'card-content';
-                    cardContent.style.width = '100%';
-                    cardContent.style.height = '100%';
-                    cardContent.style.display = 'flex';
-                    cardContent.style.flexDirection = 'column';
-                    cardContent.style.alignItems = 'center';
-                    cardContent.style.justifyContent = 'center';
-                    cardContent.style.padding = '10px';
-                    cardContent.style.textAlign = 'center';
-                    cardContent.style.background = 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)';
-                    cardContent.style.borderRadius = '10px';
+                    // 尝试加载图片
+                    const cardImg = document.createElement('img');
+                    cardImg.src = lastCard.image;
+                    cardImg.alt = lastCard.name;
+                    cardImg.className = 'card-image';
+                    cardImg.onerror = function() {
+                        // 如果图片加载失败，显示文本内容
+                        this.style.display = 'none';
+                        const cardContent = document.createElement('div');
+                        cardContent.className = 'card-text-content';
+                        
+                        cardContent.innerHTML = `
+                            <div style="font-size: 14px; font-weight: bold; margin-bottom: 5px;">${lastCard.name}</div>
+                            <div style="font-size: 12px; color: ${getRarityColor(lastCard.rarity)}; margin-bottom: 10px;">${lastCard.rarity}</div>
+                            <div style="font-size: 24px; margin-bottom: 10px;">🐹</div>
+                            <div style="font-size: 10px; color: #666;">奶茶鼠系列</div>
+                        `;
+                        
+                        elements.cardDisplay.appendChild(cardContent);
+                    };
                     
-                    cardContent.innerHTML = `
-                        <div style="font-size: 14px; font-weight: bold; margin-bottom: 5px;">${lastCard.name}</div>
-                        <div style="font-size: 12px; color: ${getRarityColor(lastCard.rarity)}; margin-bottom: 10px;">${lastCard.rarity}</div>
-                        <div style="font-size: 24px; margin-bottom: 10px;">🐹</div>
-                        <div style="font-size: 10px; color: #666;">奶茶鼠系列</div>
-                    `;
-                    
-                    elements.cardDisplay.appendChild(cardContent);
+                    elements.cardDisplay.appendChild(cardImg);
                 }
             } else {
                 elements.cardDisplay.innerHTML = '<div class="card-placeholder">点击抽卡获得第一张卡牌！</div>';
@@ -1981,20 +2033,61 @@
                     const cardDiv = document.createElement('div');
                     const isObtained = appState.collectedCards.includes(card.id);
                     
-                    // 根据稀有度添加边框类
-                    const rarityClass = getRarityClass(card.rarity);
+                    // 只在获得卡牌后添加稀有度边框类
+                    const rarityClass = isObtained ? getRarityClass(card.rarity) : '';
                     
                     cardDiv.className = `collection-card ${rarityClass} ${isObtained ? 'obtained' : ''}`;
                     
                     if (isObtained) {
-                        cardDiv.innerHTML = `
-                            <div style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; text-align: center;">
+                        // 尝试加载图片
+                        const cardImg = document.createElement('img');
+                        cardImg.src = card.image;
+                        cardImg.alt = card.name;
+                        cardImg.className = 'card-image';
+                        cardImg.onerror = function() {
+                            // 如果图片加载失败，显示文本内容
+                            this.style.display = 'none';
+                            const textContent = document.createElement('div');
+                            textContent.style.width = '100%';
+                            textContent.style.height = '100%';
+                            textContent.style.display = 'flex';
+                            textContent.style.flexDirection = 'column';
+                            textContent.style.alignItems = 'center';
+                            textContent.style.justifyContent = 'center';
+                            textContent.style.padding = '10px';
+                            textContent.style.textAlign = 'center';
+                            
+                            textContent.innerHTML = `
                                 <div style="font-size: 12px; font-weight: bold; margin-bottom: 5px;">${card.name}</div>
                                 <div style="font-size: 24px; margin-bottom: 5px;">🐹</div>
                                 <div style="font-size: 10px; color: #666;">奶茶鼠系列</div>
-                            </div>
-                            <div class="rarity-badge">${card.rarity}</div>
-                        `;
+                            `;
+                            
+                            cardDiv.appendChild(textContent);
+                        };
+                        
+                        cardDiv.appendChild(cardImg);
+                        
+                        // 添加稀有度徽章
+                        const rarityBadge = document.createElement('div');
+                        rarityBadge.className = 'rarity-badge';
+                        rarityBadge.textContent = card.rarity;
+                        cardDiv.appendChild(rarityBadge);
+                        
+                        // 添加卡牌名称标签
+                        const nameLabel = document.createElement('div');
+                        nameLabel.style.position = 'absolute';
+                        nameLabel.style.bottom = '5px';
+                        nameLabel.style.left = '5px';
+                        nameLabel.style.right = '5px';
+                        nameLabel.style.background = 'rgba(0,0,0,0.7)';
+                        nameLabel.style.color = 'white';
+                        nameLabel.style.padding = '2px 5px';
+                        nameLabel.style.borderRadius = '4px';
+                        nameLabel.style.fontSize = '10px';
+                        nameLabel.style.textAlign = 'center';
+                        nameLabel.textContent = card.name;
+                        cardDiv.appendChild(nameLabel);
                     } else {
                         cardDiv.innerHTML = `
                             <div class="card-locked">
