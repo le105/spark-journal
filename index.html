@@ -339,6 +339,22 @@
             margin-right: 10px;
             object-fit: cover;
             border: 2px solid white;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: #666;
+        }
+
+        .ai-avatar-card {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+            border: 2px solid white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
         }
 
         .ai-text {
@@ -798,6 +814,30 @@
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             border-radius: 10px;
         }
+
+        /* AI头像迷你卡牌样式 */
+        .ai-avatar-mini-card {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+            border: 2px solid white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #666;
+            overflow: hidden;
+        }
+
+        .ai-avatar-mini-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
     </style>
 </head>
 <body>
@@ -820,7 +860,9 @@
             <div class="ai-motivation" id="ai-motivation">
                 <div class="ai-content">
                     <div class="ai-header">
-                        <img src="" alt="奶茶鼠头像" class="ai-avatar" id="ai-avatar">
+                        <div class="ai-avatar-mini-card" id="ai-avatar">
+                            <span>🐹</span>
+                        </div>
                         <h3>奶茶鼠助手</h3>
                     </div>
                     <div class="ai-text" id="ai-text">
@@ -1416,23 +1458,47 @@
             
             elements.aiText.textContent = finalMotivation;
             
-            // 随机设置AI头像（使用已收集的卡牌）
+            // 更新AI头像（使用已收集的卡牌）
             updateAIAvatar();
         }
         
         // 更新AI头像
         function updateAIAvatar() {
             if (appState.collectedCards.length > 0) {
-                // 从已收集的卡牌中随机选择一个作为头像
+                // 从已收集的卡牌中随机选择一个
                 const randomCardId = appState.collectedCards[Math.floor(Math.random() * appState.collectedCards.length)];
                 const card = findCardById(randomCardId);
                 
                 if (card) {
-                    elements.aiAvatar.alt = card.name;
+                    // 清空当前头像内容
+                    elements.aiAvatar.innerHTML = '';
+                    
+                    // 尝试加载图片
+                    const avatarImg = document.createElement('img');
+                    avatarImg.src = card.image;
+                    avatarImg.alt = card.name;
+                    avatarImg.onerror = function() {
+                        // 如果图片加载失败，显示文本内容
+                        this.style.display = 'none';
+                        const textContent = document.createElement('span');
+                        textContent.textContent = '🐹';
+                        textContent.style.fontSize = '18px';
+                        elements.aiAvatar.appendChild(textContent);
+                    };
+                    
+                    avatarImg.onload = function() {
+                        // 图片加载成功，移除任何可能存在的文本内容
+                        const existingText = elements.aiAvatar.querySelector('span');
+                        if (existingText) {
+                            existingText.remove();
+                        }
+                    };
+                    
+                    elements.aiAvatar.appendChild(avatarImg);
                 }
             } else {
-                // 默认头像
-                elements.aiAvatar.alt = "奶茶鼠";
+                // 如果没有收集到卡牌，显示默认头像
+                elements.aiAvatar.innerHTML = '<span>🐹</span>';
             }
         }
         
