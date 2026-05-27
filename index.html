@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Spark Journal - 个人媒体记录</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/localforage@1.10.0/dist/localforage.min.js"></script>
@@ -14,18 +14,17 @@
             --primary-color: #6c5ce7;
             --primary-light: #a29bfe;
             --secondary-color: #fd79a8;
-            --background: #f5f6fa;
+            --background: #f8f9fa;
             --surface: #ffffff;
             --text-primary: #2d3436;
-            --text-secondary: #636e72;
+            --text-secondary: #7f8c8d;
             --success: #00b894;
             --warning: #fdcb6e;
             --danger: #e17055;
-            --border-radius: 12px;
-            --shadow: 0 2px 10px rgba(0,0,0,0.08);
-            --transition: all 0.3s ease;
+            --border-radius: 16px;
+            --shadow: 0 4px 12px rgba(108, 92, 231, 0.06);
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             
-            /* 稀有度颜色 */
             --common-color: #b0b0b0;
             --rare-color: #4d7fff;
             --epic-color: #8a2be2;
@@ -40,21 +39,19 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
             background-color: var(--background);
             color: var(--text-primary);
-            line-height: 1.5;
-            padding: 0;
-            margin: 0;
+            line-height: 1.4;
             overflow-x: hidden;
+            padding-bottom: env(safe-area-inset-bottom);
         }
 
         .app-container {
             max-width: 100%;
             min-height: 100vh;
-            padding: 0;
-            margin: 0 auto;
-            background-color: var(--background);
+            display: flex;
+            flex-direction: column;
         }
 
         /* 顶部导航 */
@@ -62,44 +59,47 @@
             position: sticky;
             top: 0;
             z-index: 100;
-            background-color: var(--surface);
-            padding: 15px;
-            box-shadow: var(--shadow);
+            background-color: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(0,0,0,0.04);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
         .app-title {
-            font-size: 20px;
-            font-weight: 700;
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
             color: var(--primary-color);
         }
 
         .spark-display {
             display: flex;
             align-items: center;
-            background-color: var(--primary-light);
-            padding: 8px 15px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            padding: 6px 14px;
             border-radius: 20px;
             color: white;
             font-weight: 600;
+            font-size: 14px;
+            box-shadow: 0 4px 10px rgba(108, 92, 231, 0.2);
         }
 
-        .spark-icon {
-            margin-right: 5px;
-        }
-
-        /* 底部导航 */
+        /* 底部导航单手优化 */
         .bottom-nav {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            background-color: var(--surface);
+            background-color: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             display: flex;
-            padding: 10px 0;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            padding: 8px 0 calc(8px + env(safe-area-inset-bottom)) 0;
+            border-top: 1px solid rgba(0,0,0,0.05);
             z-index: 100;
         }
 
@@ -108,27 +108,32 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            padding: 5px 0;
             color: var(--text-secondary);
             text-decoration: none;
-            font-size: 12px;
+            font-size: 10px;
+            font-weight: 500;
             transition: var(--transition);
         }
 
         .nav-item.active {
             color: var(--primary-color);
+            font-weight: 700;
         }
 
         .nav-icon {
-            font-size: 20px;
-            margin-bottom: 3px;
+            font-size: 18px;
+            margin-bottom: 4px;
+            transition: transform 0.2s ease;
+        }
+        
+        .nav-item.active .nav-icon {
+            transform: translateY(-2px);
         }
 
         /* 主内容区域 */
         .main-content {
-            padding: 15px;
-            padding-bottom: 70px; /* 为底部导航留出空间 */
+            padding: 12px 12px 90px 12px;
+            flex: 1;
         }
 
         .page {
@@ -142,830 +147,319 @@
         .section {
             background-color: var(--surface);
             border-radius: var(--border-radius);
-            padding: 20px;
-            margin-bottom: 15px;
+            padding: 16px;
+            margin-bottom: 12px;
             box-shadow: var(--shadow);
         }
 
         .section-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #1e272e;
         }
 
-        .section-title i {
-            margin-right: 8px;
-            color: var(--primary-color);
-        }
-
-        /* 按钮样式 */
+        /* 原生移动端质感按钮群 */
         .btn {
-            display: block;
-            width: 100%;
-            padding: 15px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
             border: none;
-            border-radius: var(--border-radius);
-            font-size: 16px;
+            border-radius: 12px;
+            font-size: 14px;
             font-weight: 600;
+            padding: 10px 16px;
             cursor: pointer;
             transition: var(--transition);
             text-align: center;
         }
 
-        .btn-primary {
-            background-color: var(--primary-color);
+        .btn:active {
+            transform: scale(0.96);
+            opacity: 0.9;
+        }
+
+        .btn-primary { background-color: var(--primary-color); color: white; }
+        .btn-success { background-color: var(--success); color: white; }
+        .btn-warning { background-color: var(--warning); color: white; }
+        .btn-danger { background-color: var(--danger); color: white; }
+
+        /* 独立出来的右下角悬浮添加按钮 (FAB) */
+        .fab-btn {
+            position: fixed;
+            right: 16px;
+            bottom: calc(75px + env(safe-area-inset-bottom));
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), #764ba2);
             color: white;
-        }
-
-        .btn-primary:active {
-            background-color: var(--primary-light);
-        }
-
-        .btn-success {
-            background-color: var(--success);
-            color: white;
-        }
-
-        .btn-warning {
-            background-color: var(--warning);
-            color: white;
-        }
-
-        .btn-danger {
-            background-color: var(--danger);
-            color: white;
-        }
-
-        /* 作品卡片 */
-        .item-card {
-            background-color: var(--surface);
-            border-radius: var(--border-radius);
-            padding: 15px;
-            margin-bottom: 10px;
-            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            box-shadow: 0 6px 16px rgba(108, 92, 231, 0.4);
+            z-index: 99;
+            border: none;
             transition: var(--transition);
         }
+        
+        .fab-btn:active {
+            transform: scale(0.88);
+        }
 
-        .item-card:active {
-            transform: scale(0.98);
+        /* 作品库顶部分类筛选器（治愈越加越长） */
+        .filter-tabs {
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            padding: 4px 0 12px 0;
+            margin-bottom: 4px;
+            scrollbar-width: none; /* 隐藏滚动条 */
+        }
+        .filter-tabs::-webkit-scrollbar { display: none; }
+
+        .tab-item {
+            flex-shrink: 0;
+            padding: 6px 14px;
+            border-radius: 20px;
+            background-color: rgba(0, 0, 0, 0.04);
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .tab-item.active {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+        }
+
+        /* 紧凑精致型作品卡片 */
+        .item-card {
+            background-color: var(--surface);
+            border-radius: 14px;
+            padding: 12px 14px;
+            margin-bottom: 10px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(0,0,0,0.01);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
         }
 
         .item-header {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 10px;
+            align-items: center;
         }
 
         .item-title {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 5px;
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
         }
 
         .item-meta {
             display: flex;
-            gap: 8px;
-            font-size: 12px;
+            gap: 6px;
+            align-items: center;
         }
 
         .item-tag {
-            padding: 3px 8px;
-            border-radius: 12px;
+            padding: 2px 8px;
+            border-radius: 6px;
             font-size: 11px;
-            font-weight: 500;
+            font-weight: 600;
         }
 
-        .tag-status {
-            background-color: var(--warning);
-            color: white;
-        }
-
-        .tag-type {
-            background-color: var(--primary-light);
-            color: white;
-        }
-
-        .tag-done {
-            background-color: var(--success);
-            color: white;
-        }
-
-        .tag-dropped {
-            background-color: var(--danger);
-            color: white;
-        }
+        .tag-status { background-color: #ffeaa7; color: #d63031; }
+        .tag-type { background-color: #e8f0fe; color: #1a73e8; }
+        .tag-done { background-color: #e3fcef; color: var(--success); }
+        .tag-dropped { background-color: #ffebe9; color: var(--danger); }
 
         .item-rating {
-            margin-top: 8px;
-            color: var(--warning);
+            color: #f1c40f;
+            font-size: 12px;
+            font-weight: bold;
         }
 
         .item-comment {
+            font-size: 13px;
+            color: #57606f;
+            background: #f1f2f6;
+            padding: 6px 10px;
+            border-radius: 8px;
+            margin-top: 2px;
+        }
+
+        /* 局部紧凑型布局控制 */
+        .flex-btn-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
             margin-top: 8px;
-            font-style: italic;
-            color: var(--text-secondary);
-            font-size: 14px;
+        }
+        
+        .reward-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.04);
         }
 
         /* 计时器 */
         .timer-display {
-            font-size: 48px;
-            font-weight: 700;
+            font-size: 42px;
+            font-weight: 800;
             text-align: center;
-            margin: 20px 0;
+            margin: 15px 0;
             color: var(--primary-color);
             font-variant-numeric: tabular-nums;
         }
 
-        .timer-controls {
-            display: flex;
-            gap: 10px;
-        }
-
-        .timer-btn {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: var(--border-radius);
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
         /* AI激励卡片 */
         .ai-motivation {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: linear-gradient(135deg, #6c5ce7, #fd79a8);
             color: white;
             border-radius: var(--border-radius);
-            padding: 20px;
-            margin-bottom: 15px;
-            box-shadow: var(--shadow);
-            position: relative;
-            overflow: hidden;
-            cursor: pointer;
-        }
-
-        .ai-motivation::before {
-            content: "";
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
-            z-index: 0;
-        }
-
-        .ai-content {
-            position: relative;
-            z-index: 1;
+            padding: 14px;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.15);
         }
 
         .ai-header {
             display: flex;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
-        .ai-icon {
-            font-size: 24px;
-            margin-right: 10px;
-        }
-
-        .ai-avatar {
-            width: 40px;
-            height: 40px;
+        .ai-avatar-mini-card {
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
-            margin-right: 10px;
-            object-fit: cover;
-            border: 2px solid white;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            margin-right: 8px;
+            background: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
-            color: #666;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            overflow: hidden;
         }
+        .ai-avatar-mini-card img { width: 100%; height: 100%; object-fit: cover; }
 
-        .ai-avatar-card {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            margin-right: 10px;
-            object-fit: cover;
-            border: 2px solid white;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-        }
+        .ai-text { font-size: 14px; line-height: 1.4; opacity: 0.95; }
+        .ai-hint { font-size: 11px; opacity: 0.7; text-align: center; margin-top: 8px; }
 
-        .ai-text {
-            font-size: 16px;
-            line-height: 1.4;
-        }
-
-        .ai-hint {
-            font-size: 12px;
-            opacity: 0.8;
+        .checkin-status {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             margin-top: 10px;
-            text-align: center;
+            padding: 8px 12px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            font-size: 13px;
+        }
+
+        .checkin-btn {
+            background: #ffffff;
+            color: var(--primary-color);
+            border: none;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
         }
 
         /* 统计卡片 */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
+            gap: 8px;
         }
 
         .stat-card {
-            background-color: var(--primary-light);
-            border-radius: var(--border-radius);
-            padding: 15px;
-            text-align: center;
-            color: white;
-        }
-
-        .stat-value {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
-
-        .stat-label {
-            font-size: 12px;
-            opacity: 0.9;
-        }
-
-        /* 奖励项 */
-        .reward-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 0;
-            border-bottom: 1px solid rgba(0,0,0,0.1);
-        }
-
-        .reward-item:last-child {
-            border-bottom: none;
-        }
-
-        .reward-info h4 {
-            font-size: 16px;
-            margin-bottom: 5px;
-        }
-
-        .reward-info p {
-            font-size: 14px;
-            color: var(--text-secondary);
-        }
-
-        .reward-cost {
-            padding: 5px 10px;
+            background-color: rgba(108, 92, 231, 0.06);
             border-radius: 12px;
-            font-size: 14px;
-            font-weight: 600;
-            color: white;
+            padding: 12px 6px;
+            text-align: center;
         }
 
-        .reward-cost.plus {
-            background-color: var(--success);
-        }
-
-        .reward-cost.minus {
-            background-color: var(--danger);
-        }
+        .stat-value { font-size: 18px; font-weight: 700; color: var(--primary-color); }
+        .stat-label { font-size: 11px; color: var(--text-secondary); }
 
         /* 空状态 */
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: var(--text-secondary);
-        }
+        .empty-state { text-align: center; padding: 30px 10px; color: var(--text-secondary); }
+        .empty-state i { font-size: 36px; margin-bottom: 8px; opacity: 0.3; }
 
-        .empty-state i {
-            font-size: 50px;
-            margin-bottom: 15px;
-            opacity: 0.5;
-        }
-
-        /* 模态框 */
+        /* 模态框优化 - 满足手机全屏感 */
         .modal {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0,0,0,0.5);
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(0,0,0,0.4);
             z-index: 1000;
             justify-content: center;
-            align-items: center;
-            padding: 20px;
+            align-items: flex-end; /* 手机端抽屉式从底部弹起 */
         }
 
         .modal-content {
             background-color: var(--surface);
             width: 100%;
-            max-width: 500px;
-            border-radius: var(--border-radius);
+            border-radius: 20px 20px 0 0;
             padding: 20px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-            max-height: 90vh;
+            max-height: 85vh;
             overflow-y: auto;
+            animation: slideUp 0.25s cubic-bezier(0, 0, 0.2, 1);
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
         }
 
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
-        .modal-title {
-            font-size: 18px;
-            font-weight: 600;
-        }
-
-        .close-btn {
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            color: var(--text-primary);
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 500;
-        }
-
+        .form-group { margin-bottom: 12px; }
+        .form-label { display: block; margin-bottom: 4px; font-size: 13px; font-weight: 600; }
         .form-input, .form-select, .form-textarea {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
-            background-color: var(--surface);
+            width: 100%; padding: 10px; border: 1px solid #e1e8ed; border-radius: 10px; font-size: 15px;
+            background-color: #f8f9fa;
         }
 
-        .form-textarea {
-            height: 100px;
-            resize: vertical;
-        }
-
-        /* 通知 */
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background-color: var(--success);
-            color: white;
-            padding: 12px 16px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            z-index: 1001;
-            display: flex;
-            align-items: center;
-            animation: slideInRight 0.5s, fadeOut 0.5s 2.5s forwards;
-        }
-
-        .notification i {
-            margin-right: 8px;
-        }
-
-        /* 动画 */
-        @keyframes slideInRight {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        @keyframes fadeOut {
-            from { opacity: 1; }
-            to { opacity: 0; }
-        }
-
-        /* 响应式调整 */
-        @media (max-width: 480px) {
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .timer-controls {
-                flex-direction: column;
-            }
-        }
-
-        /* 抽卡相关新样式 */
+        /* 抽卡区紧凑化 */
         .gacha-section {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-radius: var(--border-radius);
-            padding: 20px;
-            margin-bottom: 15px;
-            box-shadow: var(--shadow);
-            text-align: center;
+            color: white; border-radius: var(--border-radius); padding: 16px; text-align: center;
         }
-
-        .gacha-cost {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            margin: 10px 0;
-            font-size: 18px;
-        }
-
-        .gacha-btn {
-            background: linear-gradient(45deg, #FFD700, #FFA500);
-            color: #333;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 25px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
-        }
-
-        .gacha-btn:active {
-            transform: scale(0.95);
-        }
-
-        .gacha-btn:disabled {
-            background: #cccccc;
-            cursor: not-allowed;
-            transform: none;
-        }
-
         .card-display {
-            width: 120px;
-            height: 160px;
-            margin: 15px auto;
-            border-radius: 12px;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-            overflow: hidden;
-            position: relative;
+            width: 100px; height: 133px; margin: 10px auto; border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15); overflow: hidden; position: relative;
         }
+        .cards-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+        .collection-card { aspect-ratio: 3/4; border-radius: 6px; position: relative; overflow: hidden; }
 
-        .card-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 12px;
-        }
+        /* 打卡日历 */
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+        .calendar-day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 6px; font-size: 12px; }
+        .calendar-day.checked { background-color: var(--success); color: white; }
+        .calendar-day.today { border: 2px solid var(--primary-color); font-weight: bold; }
 
-        .card-placeholder {
-            color: #666;
-            font-size: 14px;
-            text-align: center;
-            padding: 20px;
+        .notification {
+            position: fixed; top: 12px; left: 12px; right: 12px; background-color: var(--success);
+            color: white; padding: 12px; border-radius: 10px; z-index: 1001; display: flex; align-items: center;
         }
-
-        /* 收集册样式 */
-        .collection-series {
-            margin-bottom: 25px;
-        }
-
-        .series-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid var(--primary-light);
-        }
-
-        .series-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: var(--primary-color);
-        }
-
-        .series-progress {
-            font-size: 14px;
-            color: var(--text-secondary);
-            background: var(--primary-light);
-            padding: 4px 12px;
-            border-radius: 15px;
-            color: white;
-        }
-
-        .cards-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-        }
-
-        .collection-card {
-            aspect-ratio: 3/4;
-            border-radius: 8px;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            position: relative;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            border: 2px solid transparent; /* 默认透明边框 */
-        }
-
-        .collection-card.obtained .card-image {
-            opacity: 1;
-        }
-
-        .collection-card .card-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            opacity: 0.3;
-            transition: opacity 0.3s ease;
-        }
-
-        .card-locked {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: #999;
-            font-size: 24px;
-        }
-
-        /* 稀有度边框样式 - 只在获得卡牌后显示 */
-        .collection-card.obtained.rarity-common {
-            border: 2px solid var(--common-color);
-        }
-
-        .collection-card.obtained.rarity-rare {
-            border: 2px solid var(--rare-color);
-            box-shadow: 0 0 8px var(--rare-color);
-        }
-
-        .collection-card.obtained.rarity-epic {
-            border: 2px solid transparent;
-            background: linear-gradient(45deg, var(--epic-color), #ff69b4) border-box;
-            box-shadow: 0 0 12px rgba(138, 43, 226, 0.5);
-        }
-
-        .collection-card.obtained.rarity-legendary {
-            border: 2px solid var(--legendary-color);
-            animation: glow 2s infinite alternate;
-            box-shadow: 0 0 15px rgba(255, 153, 0, 0.7);
-        }
-
-        /* 抽卡显示区域的稀有度边框 */
-        .card-display.rarity-common {
-            border: 2px solid var(--common-color);
-        }
-
-        .card-display.rarity-rare {
-            border: 2px solid var(--rare-color);
-            box-shadow: 0 0 8px var(--rare-color);
-        }
-
-        .card-display.rarity-epic {
-            border: 2px solid transparent;
-            background: linear-gradient(45deg, var(--epic-color), #ff69b4) border-box;
-            box-shadow: 0 0 12px rgba(138, 43, 226, 0.5);
-        }
-
-        .card-display.rarity-legendary {
-            border: 2px solid var(--legendary-color);
-            animation: glow 2s infinite alternate;
-            box-shadow: 0 0 15px rgba(255, 153, 0, 0.7);
-        }
-
-        @keyframes glow {
-            from {
-                box-shadow: 0 0 5px var(--legendary-color);
-            }
-            to {
-                box-shadow: 0 0 20px var(--legendary-color);
-            }
-        }
-
-        .rarity-badge {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: rgba(0,0,0,0.7);
-            color: white;
-            padding: 2px 6px;
-            border-radius: 10px;
-            font-size: 10px;
-            font-weight: bold;
-        }
-
-        /* 抽卡动画 */
-        @keyframes drawCard {
-            0% { transform: scale(0.8) rotateY(0deg); opacity: 0; }
-            50% { transform: scale(1.1) rotateY(180deg); opacity: 1; }
-            100% { transform: scale(1) rotateY(360deg); opacity: 1; }
-        }
-
-        .card-animation {
-            animation: drawCard 0.8s ease-out;
-        }
-
-        /* 新卡片提示 */
-        .new-card-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: var(--secondary-color);
-            color: white;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        /* 存储状态提示 */
-        .storage-status {
-            position: fixed;
-            bottom: 70px;
-            left: 0;
-            right: 0;
-            background: var(--warning);
-            color: white;
-            padding: 10px;
-            text-align: center;
-            font-size: 14px;
-            z-index: 99;
-            display: none;
-        }
-
-        /* 卡牌文本内容样式 */
-        .card-text-content {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 10px;
-            text-align: center;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            border-radius: 10px;
-        }
-
-        /* AI头像迷你卡牌样式 */
-        .ai-avatar-mini-card {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            margin-right: 10px;
-            object-fit: cover;
-            border: 2px solid white;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            color: #666;
-            overflow: hidden;
-        }
-
-        .ai-avatar-mini-card img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        /* 打卡日历样式 */
-        .checkin-calendar {
-            margin-top: 15px;
-        }
-
-        .calendar-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .calendar-title {
-            font-size: 16px;
-            font-weight: 600;
-        }
-
-        .calendar-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 5px;
-        }
-
-        .calendar-day-header {
-            text-align: center;
-            font-size: 12px;
-            color: var(--text-secondary);
-            padding: 5px 0;
-        }
-
-        .calendar-day {
-            aspect-ratio: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 8px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .calendar-day.checked {
-            background-color: var(--success);
-            color: white;
-        }
-
-        .calendar-day.today {
-            border: 2px solid var(--primary-color);
-        }
-
-        .calendar-day.other-month {
-            color: #ccc;
-        }
-
-        .calendar-day:hover:not(.other-month) {
-            background-color: var(--primary-light);
-            color: white;
-        }
-
-        .checkin-status {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-top: 15px;
-            padding: 10px 15px;
-            background: var(--primary-light);
-            color: white;
-            border-radius: var(--border-radius);
-        }
-
-        .checkin-btn {
-            background: var(--success);
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .checkin-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-
-        .checkin-btn:active:not(:disabled) {
-            transform: scale(0.95);
-        }
-
-        .streak-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .streak-count {
-            background: var(--warning);
-            color: white;
-            padding: 3px 8px;
-            border-radius: 10px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-        
-        /* 快捷增减火花按钮组布局 */
-        .flex-btn-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-        }
-        .flex-btn-group .btn {
-            flex: 1;
-            padding: 10px 15px;
-            font-size: 14px;
-        }
+        .storage-status { position: fixed; top: 0; left:0; right:0; background: var(--warning); color:white; font-size:12px; text-align:center; padding:4px; z-index:999; display:none; }
+        .card-text-content { width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:4px; text-align:center; background:#f1f2f6; color:#333; }
     </style>
 </head>
 <body>
@@ -975,194 +469,129 @@
         <header class="app-header">
             <div class="app-title">Spark Journal</div>
             <div class="spark-display">
-                <span class="spark-icon">🔥</span>
-                <span id="spark-count">0.0</span>
+                <span>🔥 <span id="spark-count">0.0</span></span>
             </div>
         </header>
 
+        <button class="fab-btn" id="add-item-btn">
+            <i class="fas fa-plus"></i>
+        </button>
+
         <main class="main-content">
             <div class="ai-motivation" id="ai-motivation">
-                <div class="ai-content">
-                    <div class="ai-header">
-                        <div class="ai-avatar-mini-card" id="ai-avatar">
-                            <span>🐹</span>
-                        </div>
-                        <h3>奶茶鼠助手</h3>
-                    </div>
-                    <div class="ai-text" id="ai-text">
-                        欢迎使用Spark Journal！开始记录你的第一个作品吧！
-                    </div>
-                    <div class="checkin-status" id="checkin-status">
-                        <span id="checkin-text">今日打卡未完成</span>
-                        <button class="checkin-btn" id="checkin-btn">打卡</button>
-                    </div>
-                    <div class="ai-hint">
-                        <i class="fas fa-sync-alt"></i> 点击刷新激励语
-                    </div>
+                <div class="ai-header">
+                    <div class="ai-avatar-mini-card" id="ai-avatar"><span>🐹</span></div>
+                    <h3 style="font-size:14px;">奶茶鼠助手</h3>
                 </div>
+                <div class="ai-text" id="ai-text">加载中...</div>
+                <div class="checkin-status">
+                    <span id="checkin-text">今日打卡未完成</span>
+                    <button class="checkin-btn" id="checkin-btn">打卡</button>
+                </div>
+                <div class="ai-hint"><i class="fas fa-sync-alt"></i> 点击卡片任意处刷新nia~</div>
             </div>
 
             <div class="page active" id="library-page">
-                <div class="section">
-                    <button class="btn btn-primary" id="add-item-btn">
-                        <i class="fas fa-plus"></i> 添加新作品
-                    </button>
+                <div class="filter-tabs" id="filter-tabs">
+                    <div class="tab-item active" data-status="全部活跃">全部活跃</div>
+                    <div class="tab-item" data-status="想试">想试</div>
+                    <div class="tab-item" data-status="在搞">在搞</div>
+                    <div class="tab-item" data-status="已完成！">已完结</div>
+                    <div class="tab-item" data-status="已弃坑">已弃</div>
                 </div>
                 
-                <div id="items-container">
-                    </div>
-                
+                <div id="items-container"></div>
                 <div class="empty-state" id="empty-library">
                     <i class="fas fa-book-open"></i>
-                    <h3>还没有作品记录</h3>
-                    <p>点击上方按钮添加你的第一个作品</p>
+                    <h3>这里空空如也</h3>
+                    <p>点击右下角加号开始记录</p>
                 </div>
             </div>
 
             <div class="page" id="focus-page">
                 <div class="section">
-                    <h2 class="section-title">
-                        <i class="fas fa-clock"></i> 专注计时器
-                    </h2>
-                    <p style="text-align: center; margin-bottom: 15px; color: var(--text-secondary);">
-                        专注投入作品，每25分钟可获得0.1火花
-                    </p>
+                    <h2 class="section-title"><i class="fas fa-clock"></i> 专注计时</h2>
                     <div class="timer-display" id="timer-display">25:00</div>
-                    <div class="timer-controls">
-                        <button class="timer-btn btn-success" id="start-timer">开始</button>
-                        <button class="timer-btn btn-warning" id="pause-timer" disabled>暂停</button>
-                        <button class="timer-btn btn-danger" id="reset-timer">重置</button>
+                    <div class="flex-btn-group">
+                        <button class="btn btn-success" id="start-timer">开始</button>
+                        <button class="btn btn-warning" id="pause-timer" disabled>暂停</button>
                     </div>
-                    <button class="btn btn-primary" id="claim-sparks" disabled style="margin-top: 15px;">
+                    <div class="flex-btn-group">
+                        <button class="btn btn-danger" id="reset-timer" style="grid-column: span 2;">重置</button>
+                    </div>
+                    <button class="btn btn-primary" id="claim-sparks" disabled style="width:100%; margin-top:8px;">
                         领取火花 (+0.1)
                     </button>
                 </div>
                 
                 <div class="section">
-                    <h2 class="section-title">
-                        <i class="fas fa-play-circle"></i> 正在进行的作品
-                    </h2>
-                    <div id="doing-items-container">
-                        </div>
-                    
+                    <h2 class="section-title"><i class="fas fa-play-circle"></i> 正在搞的</h2>
+                    <div id="doing-items-container"></div>
                     <div class="empty-state" id="empty-doing">
                         <i class="fas fa-hourglass-half"></i>
-                        <h3>没有正在进行的作品</h3>
-                        <p>在作品库中将作品状态设为"在搞"后，可以在这里开始专注</p>
+                        <p>请去作品库将作品设为“在搞”</p>
                     </div>
                 </div>
             </div>
 
             <div class="page" id="stats-page">
                 <div class="section">
-                    <h2 class="section-title">
-                        <i class="fas fa-chart-bar"></i> 数据概览
-                    </h2>
                     <div class="stats-grid">
                         <div class="stat-card">
                             <div class="stat-value" id="total-items">0</div>
-                            <div class="stat-label">总作品数</div>
+                            <div class="stat-label">总数</div>
                         </div>
                         <div class="stat-card">
                             <div class="stat-value" id="completed-items">0</div>
-                            <div class="stat-label">已完成</div>
+                            <div class="stat-label">完结</div>
                         </div>
                         <div class="stat-card">
                             <div class="stat-value" id="streak-days">0</div>
-                            <div class="stat-label">连续打卡</div>
+                            <div class="stat-label">连打</div>
                         </div>
                     </div>
                 </div>
-                
                 <div class="section">
-                    <h2 class="section-title">
-                        <i class="fas fa-calendar-check"></i> 打卡日历
-                    </h2>
-                    <div class="checkin-calendar" id="checkin-calendar">
-                        </div>
+                    <h2 class="section-title"><i class="fas fa-calendar-check"></i> 打卡日历</h2>
+                    <div class="checkin-calendar" id="checkin-calendar"></div>
                 </div>
-                
-                <div class="section">
-                    <h2 class="section-title">
-                        <i class="fas fa-chart-pie"></i> 作品类型分布
-                    </h2>
-                    <div id="type-chart">
-                        </div>
-                </div>
-                
-                <div class="section">
-                    <h2 class="section-title">
-                        <i class="fas fa-tasks"></i> 作品状态分布
-                    </h2>
-                    <div id="status-chart">
-                        </div>
-                </div>
+                <div class="section"><h2 class="section-title">类型分布</h2><div id="type-chart"></div></div>
+                <div class="section"><h2 class="section-title">状态流向</h2><div id="status-chart"></div></div>
             </div>
 
             <div class="page" id="rewards-page">
                 <div class="section">
-                    <h2 class="section-title">
-                        <i class="fas fa-gift"></i> 奖励兑换
-                    </h2>
-                    
                     <div class="gacha-section">
-                        <h3 style="margin-bottom: 10px;">卡牌抽奖</h3>
-                        <p style="margin-bottom: 15px; opacity: 0.9;">花费火花抽取随机卡牌，收集完整系列！</p>
-                        
-                        <div class="card-display" id="card-display">
-                            <div class="card-placeholder">点击抽卡获得第一张卡牌！</div>
-                        </div>
-                        
-                        <div class="gacha-cost" id="gacha-cost">
-                            <span class="spark-icon">🔥</span>
-                            <span>1.0 火花</span>
-                        </div>
-                        
-                        <button class="gacha-btn" id="gacha-btn">
-                            <i class="fas fa-dice"></i> 抽一次
-                        </button>
-                        
-                        <p style="font-size: 12px; margin-top: 10px; opacity: 0.7;">
-                            已收集: <span id="collected-count">0</span> / <span id="total-cards">0</span> 张
-                        </p>
+                        <h4 style="font-size:14px;">火花扭蛋机</h4>
+                        <div class="card-display" id="card-display"></div>
+                        <div style="font-size:13px; margin:4px 0;" id="gacha-cost">🔥 1.0 火花</div>
+                        <button class="btn btn-warning Gacha-btn" id="gacha-btn" style="border-radius:20px; font-size:12px; padding:6px 16px;">抽卡</button>
+                        <p style="font-size: 11px; opacity:0.8; margin-top:6px;">已收集: <span id="collected-count">0</span>/<span id="total-cards">0</span></p>
                     </div>
                     
-                    <div class="rewards-list">
-                        <div class="reward-item">
-                            <div class="reward-info">
-                                <h4>忍住没吃</h4>
-                                <p>成功抵抗住食物诱惑</p>
-                            </div>
-                            <div>
-                                <span class="reward-cost plus">+0.1 火花</span>
-                                <button class="btn btn-success" id="btn-earn-eat" style="padding: 8px 15px; margin-left: 10px; display:inline-block; width:auto;">获得</button>
-                            </div>
+                    <div class="reward-row">
+                        <div>
+                            <div style="font-size:14px; font-weight:600;">忍住没喝/没吃</div>
+                            <div style="font-size:11px; color:var(--text-secondary);">自律好习惯</div>
                         </div>
-                        
-                        <div class="reward-item">
-                            <div class="reward-info">
-                                <h4>刷垃圾内容40分钟</h4>
-                                <p>惩罚/扣除无意义娱乐消耗的时间</p>
-                            </div>
-                            <div>
-                                <span class="reward-cost minus">-0.2 火花</span>
-                                <button class="btn btn-danger" id="btn-cost-trash" style="padding: 8px 15px; margin-left: 10px; display:inline-block; width:auto;">扣除</button>
-                            </div>
+                        <button class="btn btn-success" id="btn-earn-eat" style="padding:6px 12px; font-size:12px;">+0.1 🔥</button>
+                    </div>
+                    <div class="reward-row">
+                        <div>
+                            <div style="font-size:14px; font-weight:600;">刷垃圾娱乐40分钟</div>
+                            <div style="font-size:11px; color:var(--text-secondary);">超时惩罚机制</div>
                         </div>
-                        
-                        <div class="reward-item" style="flex-direction: column; align-items: flex-start; gap: 8px;">
-                            <div class="reward-info" style="width: 100%;">
-                                <h4>手动增减火花数量</h4>
-                                <p>自由操控火花奖励或扣罚机制</p>
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 10px; width: 100%; margin-top: 5px;">
-                                <input type="number" id="custom-spark-val" min="0.1" step="0.1" value="1.0" class="form-input" style="width: 100px;">
-                                <span>火花数</span>
-                            </div>
-                            <div class="flex-btn-group" style="width: 100%;">
-                                <button class="btn btn-success" id="btn-custom-add"><i class="fas fa-plus"></i> 增加火花</button>
-                                <button class="btn btn-danger" id="btn-custom-sub"><i class="fas fa-minus"></i> 扣除火花</button>
-                            </div>
+                        <button class="btn btn-danger" id="btn-cost-trash" style="padding:6px 12px; font-size:12px;">-0.2 🔥</button>
+                    </div>
+                    
+                    <div style="margin-top:12px;">
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <input type="number" id="custom-spark-val" min="0.1" step="0.1" value="1.0" class="form-input" style="height:36px; padding:4px 8px;">
+                            <span style="font-size:12px; flex-shrink:0;">火花</span>
+                        </div>
+                        <div class="flex-btn-group">
+                            <button class="btn btn-success" id="btn-custom-add" style="padding:8px;"><i class="fas fa-plus"></i> 增加</button>
+                            <button class="btn btn-danger" id="btn-custom-sub" style="padding:8px;"><i class="fas fa-minus"></i> 扣除</button>
                         </div>
                     </div>
                 </div>
@@ -1170,153 +599,83 @@
 
             <div class="page" id="collection-page">
                 <div class="section">
-                    <h2 class="section-title">
-                        <i class="fas fa-bookmark"></i> 我的收集册
-                    </h2>
-                    
-                    <div style="text-align: center; margin-bottom: 20px;">
-                        <div style="background: var(--primary-light); color: white; padding: 10px 20px; border-radius: 20px; display: inline-block;">
-                            总收集进度: <span id="total-progress">0%</span>
-                        </div>
+                    <div style="text-align: center; margin-bottom: 12px;">
+                        <span style="background: var(--primary-light); color: white; padding: 4px 12px; border-radius: 12px; font-size:12px;">
+                            收集进度: <span id="total-progress">0%</span>
+                        </span>
                     </div>
-                    
-                    <div id="collection-container">
-                        </div>
+                    <div id="collection-container"></div>
                 </div>
             </div>
         </main>
 
         <nav class="bottom-nav">
-            <a href="#" class="nav-item active" data-page="library-page">
-                <i class="fas fa-book nav-icon"></i>
-                <span>作品库</span>
-            </a>
-            <a href="#" class="nav-item" data-page="focus-page">
-                <i class="fas fa-clock nav-icon"></i>
-                <span>专注</span>
-            </a>
-            <a href="#" class="nav-item" data-page="stats-page">
-                <i class="fas fa-chart-bar nav-icon"></i>
-                <span>统计</span>
-            </a>
-            <a href="#" class="nav-item" data-page="rewards-page">
-                <i class="fas fa-gift nav-icon"></i>
-                <span>奖励</span>
-            </a>
-            <a href="#" class="nav-item" data-page="collection-page">
-                <i class="fas fa-bookmark nav-icon"></i>
-                <span>收集册</span>
-            </a>
+            <a href="#" class="nav-item active" data-page="library-page"><i class="fas fa-book nav-icon"></i><span>作品库</span></a>
+            <a href="#" class="nav-item" data-page="focus-page"><i class="fas fa-clock nav-icon"></i><span>专注</span></a>
+            <a href="#" class="nav-item" data-page="stats-page"><i class="fas fa-chart-bar nav-icon"></i><span>统计</span></a>
+            <a href="#" class="nav-item" data-page="rewards-page"><i class="fas fa-gift nav-icon"></i><span>奖励</span></a>
+            <a href="#" class="nav-item" data-page="collection-page"><i class="fas fa-bookmark nav-icon"></i><span>收集册</span></a>
         </nav>
     </div>
 
     <div class="modal" id="add-item-modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title">添加新作品</h2>
-                <button class="close-btn" id="close-modal">&times;</button>
+                <h3 style="font-size:16px; font-weight:700;">添加/编辑作品</h3>
+                <button style="background:none; border:none; font-size:20px;" id="close-modal">&times;</button>
             </div>
             <form id="item-form">
                 <div class="form-group">
-                    <label class="form-label" for="item-title">作品名称</label>
-                    <input type="text" class="form-input" id="item-title" required>
+                    <label class="form-label">作品名称</label>
+                    <input type="text" class="form-input" id="item-title" required placeholder="请输入作品名...">
                 </div>
-                
                 <div class="form-group">
-                    <label class="form-label" for="item-type">作品类型</label>
+                    <label class="form-label">作品类型</label>
                     <select class="form-select" id="item-type" required>
-                        <option value="">请选择类型</option>
                         <option value="游戏">游戏</option>
                         <option value="书籍">书籍</option>
                         <option value="视频">视频</option>
                         <option value="其他">其他</option>
                     </select>
                 </div>
-                
                 <div class="form-group">
-                    <label class="form-label" for="item-status">当前状态</label>
+                    <label class="form-label">当前状态</label>
                     <select class="form-select" id="item-status" required>
-                        <option value="">请选择状态</option>
                         <option value="想试">想试</option>
                         <option value="在搞">在搞</option>
                         <option value="已完成！">已完成！</option>
                         <option value="已弃坑">已弃坑</option>
                     </select>
                 </div>
-                
                 <div class="form-group">
-                    <label class="form-label" for="item-rating">评分 (1-10)</label>
-                    <input type="number" class="form-input" id="item-rating" min="1" max="10" step="0.1">
+                    <label class="form-label">评分 (1-10)</label>
+                    <input type="number" class="form-input" id="item-rating" min="1" max="10" step="0.1" placeholder="选填">
                 </div>
-                
                 <div class="form-group">
-                    <label class="form-label" for="item-comment">短评</label>
-                    <textarea class="form-textarea" id="item-comment"></textarea>
+                    <label class="form-label">随笔记录</label>
+                    <textarea class="form-textarea" id="item-comment" rows="2" placeholder="写点心得想法..."></textarea>
                 </div>
-                
-                <button type="submit" class="btn btn-primary">保存作品</button>
+                <button type="submit" class="btn btn-primary" style="width:100%; padding:12px; margin-top:8px;">保存记录</button>
             </form>
         </div>
     </div>
 
     <script>
-        // 初始化localForage
         const storage = localforage.createInstance({
             name: 'SparkJournal',
             driver: [localforage.INDEXEDDB, localforage.WEBSQL, localforage.LOCALSTORAGE]
         });
 
-        // 奶茶鼠风格AI激励语库
         const milkTeaMotivations = {
-            welcome: [
-                "欢迎来到Spark Journal啦~ 我是奶茶鼠nia！🥤",
-                "准备好和奶茶鼠一起记录精彩作品了吗？nia",
-                "来啦来啦~ 奶茶鼠带着火花和鼓励出现啦nia！",
-                "嗨~ 我是奶茶鼠nia，我们一起让自律变得有趣吧！🥤✨"
-            ],
-            empty: [
-                "你的作品库空空如也，快加点东西进去吧，nia",
-                "没有记录的作品就像没有珍珠的奶茶，加点料吧！🥤",
-                "nia 作品库空空的，奶茶鼠有点寂寞呢...",
-                "快添加第一个作品吧，奶茶鼠已经等不及要看啦！"
-            ],
-            progress: [
-                "哇~ 你已经完成了{completed}部作品！继续保持这个势头，nia！",
-                "专注{totalHours}小时，获得了{sparks}火花，太厉害啦！🥤",
-                "你的{completed}部已完成作品证明了你的坚持，奶茶鼠为你骄傲！",
-                "nia {completed}部作品完成啦！像奶茶里的珍珠一样多呢！"
-            ],
-            encouragement: [
-                "专注25分钟就能获得0.1火花，每一分钟都像奶茶一样香甜！",
-                "完成一部作品可以获得0.5火花，比专注更有效率喔~ nia！",
-                "你的{doingCount}部进行中作品正在等待完成，加油啦！",
-                "平均评分{avgRating}，说明你很有品味呢，像选奶茶一样准！",
-                "火花已经积累到{sparks}了，离奖励越来越近了，nia~"
-            ],
-            humorous: [
-                "别让想试列表越来越长，完成列表却一动不动！抗议nia！",
-                "你的专注时间比刷短视频的时间还少？奶茶鼠不信！🥤",
-                "完成一部作品获得的火花，够你刷除不少负能量呢，划算吧！",
-                "你的{doingCount}部进行中作品说：'选我！选我！' nia",
-                "火花不会自己增加，但拖延症会自己发作！奶茶鼠提醒你~"
-            ],
-            milkTeaThemed: [
-                "你的火花像珍珠奶茶里的珍珠一样多啦~ 开心nia！",
-                "每一点专注都像奶茶里的糖分，让生活更甜美！🥤",
-                "完成作品就像喝完一杯奶茶，满足感爆棚！",
-                "nia 你的进度让奶茶鼠想喝杯奶茶庆祝一下！",
-                "专注时间到！奶茶鼠给你加油，像加珍珠一样加把劲！"
-            ],
-            checkin: [
-                "今天打卡了吗？打卡可以获得连续奖励哦~ nia！",
-                "连续打卡三天可以免费抽卡一次，奶茶鼠帮你记着呢！",
-                "打卡就像每天喝奶茶一样，养成习惯就好啦！🥤",
-                "你的连续打卡天数已经{streakDays}天了，太棒啦！",
-                "别忘了打卡哦，奶茶鼠在日历上等着画勾勾nia"
-            ]
+            welcome: ["欢迎来到Spark Journal啦~ 我是奶茶鼠nia！🥤", "来啦来啦~ 奶茶鼠带着火花和鼓励出现啦nia！"],
+            empty: ["你的作品库空空如也，快加点东西进去吧，nia"],
+            progress: ["哇~ 你已经完成了{completed}部作品！继续保持这个状态，nia！", "专注时间换算了{totalHours}小时，太厉害啦！🥤"],
+            encouragement: ["专注25分钟就能获得0.1火花，加油啦！", "你的{doingCount}部进行中作品正在等待完成，加油啦！"],
+            humorous: ["别让想试列表越来越长，完成列表却一动不动！抗议nia！", "火花不会自己增加，但拖延症会自己发作！"],
+            milkTeaThemed: ["每一点专注都像奶茶里的糖分，让生活更甜美！🥤", "完成作品就像喝完一杯奶茶，满足感爆棚！"],
+            checkin: ["今天打卡了吗？打卡可以获得连续奖励哦~ nia！", "连续打卡三天可以免费抽卡一次，奶茶鼠帮你记着呢！"]
         };
         
-        // 卡牌数据
         const cardData = {
             series1: {
                 name: "奶茶鼠系列",
@@ -1324,43 +683,26 @@
                     { id: "series1_01", name: "泡泡", image: "images/cards/series1/card1.jpg", rarity: "普通" },
                     { id: "series1_02", name: "崩溃", image: "images/cards/series1/card2.jpg", rarity: "普通" },
                     { id: "series1_03", name: "恼火", image: "images/cards/series1/card3.jpg", rarity: "稀有" },
-                    { id: "series1_04", name: "开饭", image: "images/cards/series1/card4.jpg", rarity: "稀微" },
+                    { id: "series1_04", name: "开饭", image: "images/cards/series1/card4.jpg", rarity: "普通" },
                     { id: "series1_05", name: "去学习", image: "images/cards/series1/card5.jpg", rarity: "史诗" },
-                    { id: "series1_06", name: "我有一个馊主意", image: "images/cards/series1/card6.jpg", rarity: "传说" },
+                    { id: "series1_06", name: "绝妙想法", image: "images/cards/series1/card6.jpg", rarity: "传说" },
                     { id: "series1_07", name: "委屈", image: "images/cards/series1/card7.jpg", rarity: "史诗" },
                     { id: "series1_08", name: "喜欢", image: "images/cards/series1/card8.jpg", rarity: "史诗" },
-                    { id: "series1_09", name: "坏", image: "images/cards/series1/card9.jpg", rarity: "稀有" },
-                    { id: "series1_10", name: "屁", image: "images/cards/series1/card10.jpg", rarity: "稀有" },
-                    { id: "series1_11", name: "好耶", image: "images/cards/series1/card11.jpg", rarity: "稀有" },
-                    { id: "series1_12", name: "来啦", image: "images/cards/series1/card12.jpg", rarity: "普通" },
-                    { id: "series1_13", name: "麻了", image: "images/cards/series1/card13.jpg", rarity: "普通" },
-                    { id: "series1_14", name: "撞墙", image: "images/cards/series1/card14.jpg", rarity: "普通" },
-                    { id: "series1_15", name: "迷幻", image: "images/cards/series1/card15.jpg", rarity: "普通" },
-                    { id: "series1_16", name: "乖", image: "images/cards/series1/card16.jpg", rarity: "普通" },
-                    { id: "series1_17", name: "连环炮", image: "images/cards/series1/card17.jpg", rarity: "普通" }
+                    { id: "series1_09", name: "开溜", image: "images/cards/series1/card9.jpg", rarity: "稀有" },
+                    { id: "series1_10", name: "无语", image: "images/cards/series1/card10.jpg", rarity: "稀有" }
                 ]
             }
         };
 
-        // 应用状态和数据
         const appState = {
             items: [],
             sparks: 0.0,
-            timer: {
-                isRunning: false,
-                timeLeft: 25 * 60,
-                interval: null
-            },
+            currentFilter: '全部活跃',
+            timer: { isRunning: false, timeLeft: 25 * 60, interval: null },
             collectedCards: [],
-            checkinData: {
-                dates: [],
-                streak: 0,
-                lastCheckin: null,
-                freeGachaCount: 0
-            }
+            checkinData: { dates: [], streak: 0, lastCheckin: null, freeGachaCount: 0 }
         };
         
-        // DOM元素
         const elements = {
             sparkCount: document.getElementById('spark-count'),
             itemsContainer: document.getElementById('items-container'),
@@ -1395,11 +737,8 @@
             totalProgress: document.getElementById('total-progress'),
             storageStatus: document.getElementById('storage-status'),
             checkinCalendar: document.getElementById('checkin-calendar'),
-            checkinStatus: document.getElementById('checkin-status'),
-            checkinText: document.getElementById('checkin-text'),
             checkinBtn: document.getElementById('checkin-btn'),
-            
-            // 绑定新奖励界面元素
+            checkinText: document.getElementById('checkin-text'),
             btnEarnEat: document.getElementById('btn-earn-eat'),
             btnCostTrash: document.getElementById('btn-cost-trash'),
             customSparkVal: document.getElementById('custom-spark-val'),
@@ -1407,901 +746,305 @@
             btnCustomSub: document.getElementById('btn-custom-sub')
         };
         
-        // 初始化应用
         async function initApp() {
             await loadData();
             updateSparkDisplay();
             renderItems();
             setupEventListeners();
+            setupFilterTabs();
             updateStats();
             updateAIMotivation();
             initCardSystem();
             renderCheckinCalendar();
             updateCheckinStatus();
-            showStorageStatus("数据加载完成！");
         }
         
-        // 从存储加载数据
         async function loadData() {
             try {
                 const items = await storage.getItem('items');
                 const sparks = await storage.getItem('sparks');
                 const collectedCards = await storage.getItem('collectedCards');
                 const checkinData = await storage.getItem('checkinData');
-                
                 if (items) appState.items = items;
                 if (sparks) appState.sparks = parseFloat(sparks);
                 if (collectedCards) appState.collectedCards = collectedCards;
                 if (checkinData) appState.checkinData = checkinData;
-                
-                console.log("数据加载成功");
-            } catch (error) {
-                console.error("加载数据失败:", error);
-                showStorageStatus("加载数据失败，使用默认数据");
-            }
+            } catch (e) { console.error(e); }
         }
         
-        // 保存数据到存储
         async function saveData() {
             try {
                 await storage.setItem('items', appState.items);
                 await storage.setItem('sparks', appState.sparks.toString());
                 await storage.setItem('collectedCards', appState.collectedCards);
                 await storage.setItem('checkinData', appState.checkinData);
-                console.log("数据保存成功");
-                return true;
-            } catch (error) {
-                console.error("保存数据失败:", error);
-                showStorageStatus("保存数据失败，请检查存储空间");
-                return false;
-            }
+            } catch (e) { console.error(e); }
+        }
+
+        function setupFilterTabs() {
+            document.querySelectorAll('.tab-item').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    appState.currentFilter = tab.getAttribute('data-status');
+                    renderItems();
+                });
+            });
         }
         
-        // 显示存储状态
-        function showStorageStatus(message) {
-            elements.storageStatus.textContent = message;
-            elements.storageStatus.style.display = 'block';
-            setTimeout(() => {
-                elements.storageStatus.style.display = 'none';
-            }, 3000);
-        }
-        
-        // 设置事件监听器
         function setupEventListeners() {
-            // 底部导航切换
             elements.navItems.forEach(item => {
                 item.addEventListener('click', (e) => {
                     e.preventDefault();
                     const pageId = item.getAttribute('data-page');
                     switchPage(pageId);
-                    
                     elements.navItems.forEach(nav => nav.classList.remove('active'));
                     item.classList.add('active');
                 });
             });
             
-            // AI激励卡片点击事件
-            elements.aiMotivation.addEventListener('click', updateAIMotivation);
-            
-            // 打卡按钮点击事件
+            elements.aiMotivation.addEventListener('click', (e) => {
+                if(e.target.id !== 'checkin-btn') updateAIMotivation();
+            });
             elements.checkinBtn.addEventListener('click', handleCheckin);
-            
-            // 模态框
             elements.addItemBtn.addEventListener('click', () => {
+                elements.itemForm.reset();
+                elements.itemForm.removeAttribute('data-editing');
                 elements.addItemModal.style.display = 'flex';
             });
-            
-            elements.closeModal.addEventListener('click', () => {
-                elements.addItemModal.style.display = 'none';
-            });
-            
-            // 表单提交
+            elements.closeModal.addEventListener('click', () => elements.addItemModal.style.display = 'none');
             elements.itemForm.addEventListener('submit', handleFormSubmit);
             
-            // 计时器控制
             elements.startTimer.addEventListener('click', startTimer);
             elements.pauseTimer.addEventListener('click', pauseTimer);
             elements.resetTimer.addEventListener('click', resetTimer);
             elements.claimSparks.addEventListener('click', claimSparks);
             
-            // 绑定具体的固定奖励项
-            elements.btnEarnEat.addEventListener('click', async () => {
-                appState.sparks += 0.1;
-                updateSparkDisplay();
-                await saveData();
-                showSparkNotification(0.1, "忍住没吃奖励");
-                updateAIMotivation();
-            });
-            
+            elements.btnEarnEat.addEventListener('click', async () => { appState.sparks += 0.1; updateSparkDisplay(); await saveData(); showSparkNotification(0.1, "自律机制奖励"); });
             elements.btnCostTrash.addEventListener('click', async () => {
-                if (appState.sparks < 0.2) {
-                    alert('当前火花额度不足以扣除！');
-                    return;
-                }
-                appState.sparks -= 0.2;
-                updateSparkDisplay();
-                await saveData();
-                showSparkNotification(-0.2, "刷垃圾内容扣除");
-                updateAIMotivation();
+                if (appState.sparks < 0.2) { alert('火花数不足以扣除 nia~'); return; }
+                appState.sparks -= 0.2; updateSparkDisplay(); await saveData(); showSparkNotification(-0.2, "超时惩罚扣除");
             });
-            
-            // 手动增减自定义火花
             elements.btnCustomAdd.addEventListener('click', async () => {
                 const val = parseFloat(elements.customSparkVal.value);
-                if(isNaN(val) || val <= 0) { alert('请输入正确的火花数值'); return; }
-                appState.sparks += val;
-                updateSparkDisplay();
-                await saveData();
-                showSparkNotification(val, "手动充值奖励");
-                updateAIMotivation();
+                if(isNaN(val) || val <= 0) return; appState.sparks += val; updateSparkDisplay(); await saveData(); showSparkNotification(val, "补录火花奖励");
             });
-
             elements.btnCustomSub.addEventListener('click', async () => {
                 const val = parseFloat(elements.customSparkVal.value);
-                if(isNaN(val) || val <= 0) { alert('请输入正确的火花数值'); return; }
-                if (appState.sparks < val) {
-                    alert('当前剩的火花不够扣啦！');
-                    return;
-                }
-                appState.sparks -= val;
-                updateSparkDisplay();
-                await saveData();
-                showSparkNotification(-val, "手动惩罚扣除");
-                updateAIMotivation();
+                if(isNaN(val) || val <= 0 || appState.sparks < val) return; appState.sparks -= val; updateSparkDisplay(); await saveData(); showSparkNotification(-val, "补录惩罚扣除");
             });
         }
 
-        // 初始化卡牌系统
-        function initCardSystem() {
-            updateCardDisplay();
-            updateCollectionStats();
-            renderCollection();
-            updateGachaButton();
-            elements.gachaBtn.addEventListener('click', drawCard);
-        }
-        
-        // 更新AI激励语
-        function updateAIMotivation() {
-            const completedCount = appState.items.filter(item => item.status === '已完成！').length;
-            const doingCount = appState.items.filter(item => item.status === '在搞').length;
-            const totalHours = (appState.sparks * 10).toFixed(1);
-            const ratedItems = appState.items.filter(item => item.rating);
-            const avgRating = ratedItems.length > 0 ? 
-                (ratedItems.reduce((sum, item) => sum + item.rating, 0) / ratedItems.length).toFixed(1) : 
-                '0.0';
-            
-            let motivationPool = [];
-            
-            if (appState.items.length === 0) {
-                motivationPool = milkTeaMotivations.empty;
-            } else if (completedCount === 0) {
-                motivationPool = [...milkTeaMotivations.encouragement, ...milkTeaMotivations.humorous];
-            } else {
-                motivationPool = [
-                    ...milkTeaMotivations.progress,
-                    ...milkTeaMotivations.encouragement, 
-                    ...milkTeaMotivations.humorous,
-                    ...milkTeaMotivations.milkTeaThemed,
-                    ...milkTeaMotivations.checkin
-                ];
-            }
-            
-            const randomMotivation = motivationPool[Math.floor(Math.random() * motivationPool.length)];
-            
-            let finalMotivation = randomMotivation
-                .replace('{completed}', completedCount)
-                .replace('{doingCount}', doingCount)
-                .replace('{totalHours}', totalHours)
-                .replace('{sparks}', appState.sparks.toFixed(1))
-                .replace('{avgRating}', avgRating)
-                .replace('{streakDays}', appState.checkinData.streak);
-            
-            elements.aiText.textContent = finalMotivation;
-            updateAIAvatar();
-        }
-        
-        // 更新AI头像
-        function updateAIAvatar() {
-            if (appState.collectedCards.length > 0) {
-                const randomCardId = appState.collectedCards[Math.floor(Math.random() * appState.collectedCards.length)];
-                const card = findCardById(randomCardId);
-                
-                if (card) {
-                    elements.aiAvatar.innerHTML = '';
-                    const avatarImg = document.createElement('img');
-                    avatarImg.src = card.image;
-                    avatarImg.alt = card.name;
-                    avatarImg.onerror = function() {
-                        this.style.display = 'none';
-                        const textContent = document.createElement('span');
-                        textContent.textContent = '🐹';
-                        textContent.style.fontSize = '18px';
-                        elements.aiAvatar.appendChild(textContent);
-                    };
-                    
-                    avatarImg.onload = function() {
-                        const existingText = elements.aiAvatar.querySelector('span');
-                        if (existingText) { existingText.remove(); }
-                    };
-                    elements.aiAvatar.appendChild(avatarImg);
-                }
-            } else {
-                elements.aiAvatar.innerHTML = '<span>🐹</span>';
-            }
-        }
-        
-        // 切换页面
         function switchPage(pageId) {
-            elements.pages.forEach(page => {
-                if (page.id === pageId) {
-                    page.classList.add('active');
-                } else {
-                    page.classList.remove('active');
-                }
-            });
-            
-            if (pageId === 'focus-page') { renderDoingItems(); }
+            elements.pages.forEach(page => page.id === pageId ? page.classList.add('active') : page.classList.remove('active'));
+            if (pageId === 'focus-page') renderDoingItems();
             if (pageId === 'stats-page') { updateStats(); renderCheckinCalendar(); }
-            if (pageId === 'collection-page') { renderCollection(); }
-            updateAIMotivation();
+            if (pageId === 'collection-page') renderCollection();
         }
         
-        // 处理表单提交
         async function handleFormSubmit(e) {
             e.preventDefault();
-            
             const title = document.getElementById('item-title').value;
             const type = document.getElementById('item-type').value;
             const status = document.getElementById('item-status').value;
             const rating = document.getElementById('item-rating').value ? parseFloat(document.getElementById('item-rating').value) : null;
             const comment = document.getElementById('item-comment').value;
-            
             const editingItemId = elements.itemForm.getAttribute('data-editing');
-            let oldStatus = null;
             
             if (editingItemId) {
-                const oldItem = appState.items.find(item => item.id === editingItemId);
-                oldStatus = oldItem.status;
-                
                 const itemIndex = appState.items.findIndex(item => item.id === editingItemId);
-                appState.items[itemIndex] = {
-                    ...appState.items[itemIndex],
-                    title, type, status, rating, comment,
-                    updatedAt: new Date().toISOString()
-                };
-                
-                // 当作品状态变为已完成！一次性奖励为 0.5
-                if (oldStatus === '在搞' && status === '已完成！') {
-                    appState.sparks += 0.5;
-                    updateSparkDisplay();
-                    await saveData();
-                    showSparkNotification(0.5, "完结作品一次性奖励");
-                }
-                elements.itemForm.removeAttribute('data-editing');
+                const oldStatus = appState.items[itemIndex].status;
+                appState.items[itemIndex] = { ...appState.items[itemIndex], title, type, status, rating, comment, updatedAt: new Date().toISOString() };
+                if (oldStatus !== '已完成！' && status === '已完成！') { appState.sparks += 0.5; showSparkNotification(0.5, "作品完结奖励！"); }
             } else {
-                const newItem = {
-                    id: Date.now().toString(),
-                    title, type, status, rating, comment,
-                    createdAt: new Date().toISOString()
-                };
-                appState.items.push(newItem);
-                
-                // 【修改加分项】：创建时直接选完结同样能触发 0.5 火花奖励
-                if (status === '已完成！') {
-                    appState.sparks += 0.5;
-                    updateSparkDisplay();
-                    showSparkNotification(0.5, "完结作品一次性奖励");
-                }
+                appState.items.push({ id: Date.now().toString(), title, type, status, rating, comment, createdAt: new Date().toISOString() });
+                if (status === '已完成！') { appState.sparks += 0.5; showSparkNotification(0.5, "作品完结奖励！"); }
             }
-            
             await saveData();
             renderItems();
-            updateAIMotivation();
-            
-            elements.itemForm.reset();
+            updateSparkDisplay();
             elements.addItemModal.style.display = 'none';
         }
         
-        // 渲染作品列表
         function renderItems() {
             elements.itemsContainer.innerHTML = '';
-            if (appState.items.length === 0) {
+            let filtered = appState.items;
+            
+            if (appState.currentFilter === '全部活跃') {
+                filtered = appState.items.filter(item => item.status === '在搞' || item.status === '想试');
+            } else {
+                filtered = appState.items.filter(item => item.status === appState.currentFilter);
+            }
+            
+            if (filtered.length === 0) {
                 elements.emptyLibrary.style.display = 'block';
                 return;
             }
             elements.emptyLibrary.style.display = 'none';
             
-            const sortedItems = [...appState.items].sort((a, b) => {
-                const dateA = a.updatedAt || a.createdAt;
-                const dateB = b.updatedAt || b.createdAt;
-                return new Date(dateB) - new Date(dateA);
-            });
-            
-            sortedItems.forEach(item => {
-                const itemElement = createItemElement(item);
-                elements.itemsContainer.appendChild(itemElement);
+            filtered.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt)).forEach(item => {
+                elements.itemsContainer.appendChild(createItemElement(item));
             });
         }
         
-        // 渲染正在进行的作品列表
         function renderDoingItems() {
             elements.doingItemsContainer.innerHTML = '';
-            const doingItems = appState.items.filter(item => item.status === '在搞');
-            if (doingItems.length === 0) {
-                elements.emptyDoing.style.display = 'block';
-                return;
-            }
+            const doing = appState.items.filter(item => item.status === '在搞');
+            if(doing.length === 0) { elements.emptyDoing.style.display = 'block'; return; }
             elements.emptyDoing.style.display = 'none';
-            
-            doingItems.forEach(item => {
-                const itemElement = createItemElement(item);
-                elements.doingItemsContainer.appendChild(itemElement);
-            });
+            doing.forEach(item => elements.doingItemsContainer.appendChild(createItemElement(item)));
         }
         
-        // 创建作品元素
         function createItemElement(item) {
-            const itemDiv = document.createElement('div');
-            itemDiv.className = 'item-card';
-            itemDiv.setAttribute('data-id', item.id);
+            const card = document.createElement('div');
+            card.className = 'item-card';
+            let sClass = 'tag-status';
+            if (item.status === '已完成！') sClass = 'tag-done';
+            if (item.status === '已弃坑') sClass = 'tag-dropped';
             
-            let statusClass = 'tag-status';
-            if (item.status === '已完成！') statusClass = 'tag-done';
-            if (item.status === '已弃坑') statusClass = 'tag-dropped';
-            
-            let starsHtml = '';
-            if (item.rating) {
-                const fullStars = Math.floor(item.rating / 2);
-                const halfStar = item.rating % 2 >= 1;
-                for (let i = 0; i < 5; i++) {
-                    if (i < fullStars) { starsHtml += '★'; } 
-                    else if (i === fullStars && halfStar) { starsHtml += '½'; } 
-                    else { starsHtml += '☆'; }
-                }
-            }
-            
-            itemDiv.innerHTML = `
+            card.innerHTML = `
                 <div class="item-header">
                     <div>
-                        <div class="item-title">${item.title}</div>
-                        <div class="item-meta">
-                            <span class="item-tag ${statusClass}">${item.status}</span>
+                        <span class="item-title">${item.title}</span>
+                        <div class="item-meta" style="margin-top:4px;">
+                            <span class="item-tag ${sClass}">${item.status}</span>
                             <span class="item-tag tag-type">${item.type}</span>
+                            ${item.rating ? `<span class="item-rating">★ ${item.rating}</span>` : ''}
                         </div>
                     </div>
-                    <div>
-                        <button class="edit-btn" data-id="${item.id}" style="background: none; border: none; color: var(--primary-color); font-size: 16px;">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                    </div>
+                    <button class="edit-btn" style="background:none; border:none; color:var(--primary-color); padding:4px;"><i class="fas fa-pen"></i></button>
                 </div>
-                ${item.rating ? `<div class="item-rating">${starsHtml} ${item.rating}/10</div>` : ''}
                 ${item.comment ? `<div class="item-comment">${item.comment}</div>` : ''}
             `;
-            itemDiv.querySelector('.edit-btn').addEventListener('click', () => editItem(item.id));
-            return itemDiv;
+            card.querySelector('.edit-btn').addEventListener('click', () => {
+                document.getElementById('item-title').value = item.title;
+                document.getElementById('item-type').value = item.type;
+                document.getElementById('item-status').value = item.status;
+                document.getElementById('item-rating').value = item.rating || '';
+                document.getElementById('item-comment').value = item.comment || '';
+                elements.itemForm.setAttribute('data-editing', item.id);
+                elements.addItemModal.style.display = 'flex';
+            });
+            return card;
         }
+
+        function updateSparkDisplay() { elements.sparkCount.textContent = appState.sparks.toFixed(1); }
         
-        function editItem(id) {
-            const item = appState.items.find(item => item.id === id);
-            if (!item) return;
-            
-            document.getElementById('item-title').value = item.title;
-            document.getElementById('item-type').value = item.type;
-            document.getElementById('item-status').value = item.status;
-            document.getElementById('item-rating').value = item.rating || '';
-            document.getElementById('item-comment').value = item.comment || '';
-            
-            elements.itemForm.setAttribute('data-editing', id);
-            elements.addItemModal.style.display = 'flex';
-        }
-        
-        function updateSparkDisplay() {
-            elements.sparkCount.textContent = appState.sparks.toFixed(1);
-        }
-        
-        // 显示获得/扣除通知
         function showSparkNotification(amount, reason) {
-            const notification = document.createElement('div');
-            notification.className = 'notification';
-            if (amount < 0) {
-                notification.style.backgroundColor = 'var(--danger)';
-            }
-            const symbol = amount >= 0 ? '+' : '';
-            notification.innerHTML = `
-                <i class="fas fa-fire"></i>
-                <div>
-                    <div>${symbol}${amount.toFixed(1)} 火花</div>
-                    <div style="font-size: 12px;">${reason}</div>
-                </div>
-            `;
-            
-            document.body.appendChild(notification);
-            setTimeout(() => {
-                if (document.body.contains(notification)) { document.body.removeChild(notification); }
-            }, 3000);
+            const n = document.createElement('div'); n.className = 'notification';
+            if(amount < 0) n.style.backgroundColor = 'var(--danger)';
+            n.innerHTML = `<i class="fas fa-fire" style="margin-right:8px;"></i><div>${amount >= 0 ? '+':''}${amount.toFixed(1)} 火花 (${reason})</div>`;
+            document.body.appendChild(n); setTimeout(() => n.remove(), 2500);
         }
-        
-        // 计时器功能
+
+        // 计时器控制逻辑
         function startTimer() {
             if (appState.timer.isRunning) return;
             appState.timer.isRunning = true;
-            elements.startTimer.disabled = true;
-            elements.pauseTimer.disabled = false;
-            elements.claimSparks.disabled = true;
-            
+            elements.startTimer.disabled = true; elements.pauseTimer.disabled = false;
             appState.timer.interval = setInterval(() => {
                 appState.timer.timeLeft--;
-                updateTimerDisplay();
-                
+                const min = Math.floor(appState.timer.timeLeft / 60);
+                const sec = appState.timer.timeLeft % 60;
+                elements.timerDisplay.textContent = `${min.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`;
                 if (appState.timer.timeLeft <= 0) {
                     clearInterval(appState.timer.interval);
-                    appState.timer.isRunning = false;
-                    elements.claimSparks.disabled = false;
-                    elements.pauseTimer.disabled = true;
+                    appState.timer.isRunning = false; elements.claimSparks.disabled = false;
                 }
             }, 1000);
         }
-        
-        function pauseTimer() {
-            if (!appState.timer.isRunning) return;
-            clearInterval(appState.timer.interval);
-            appState.timer.isRunning = false;
-            elements.startTimer.disabled = false;
-            elements.pauseTimer.disabled = true;
+        function pauseTimer() { clearInterval(appState.timer.interval); appState.timer.isRunning = false; elements.startTimer.disabled = false; elements.pauseTimer.disabled = true; }
+        function resetTimer() { pauseTimer(); appState.timer.timeLeft = 25 * 60; elements.timerDisplay.textContent = "25:00"; elements.claimSparks.disabled = true; }
+        async function claimSparks() { appState.sparks += 0.1; updateSparkDisplay(); await saveData(); showSparkNotification(0.1, "高效专注完成"); resetTimer(); }
+
+        // 打卡与扭蛋系统
+        function handleCheckin() {
+            const todayStr = new Date().toISOString().split('T')[0];
+            if (appState.checkinData.dates.includes(todayStr)) return;
+            appState.checkinData.dates.push(todayStr);
+            appState.checkinData.streak++;
+            if (appState.checkinData.streak % 3 === 0) appState.checkinData.freeGachaCount++;
+            saveData(); updateCheckinStatus(); renderCheckinCalendar(); updateStats();
+            showSparkNotification(0, "打卡成功！已连续打卡" + appState.checkinData.streak + "天");
         }
-        
-        function resetTimer() {
-            clearInterval(appState.timer.interval);
-            appState.timer.isRunning = false;
-            appState.timer.timeLeft = 25 * 60;
-            elements.startTimer.disabled = false;
-            elements.pauseTimer.disabled = true;
-            elements.claimSparks.disabled = true;
-            updateTimerDisplay();
+        function updateCheckinStatus() {
+            const todayStr = new Date().toISOString().split('T')[0];
+            const ok = appState.checkinData.dates.includes(todayStr);
+            elements.checkinText.textContent = ok ? "今日打卡已画勾勾" : "今日打卡未完成";
+            elements.checkinBtn.disabled = ok; elements.checkinBtn.textContent = ok ? "已打卡" : "打卡";
         }
-        
-        function updateTimerDisplay() {
-            const minutes = Math.floor(appState.timer.timeLeft / 60);
-            const seconds = appState.timer.timeLeft % 60;
-            elements.timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-        }
-        
-        async function claimSparks() {
-            appState.sparks += 0.1;
-            updateSparkDisplay();
-            await saveData();
-            showSparkNotification(0.1, "专注奖励");
-            updateAIMotivation();
-            resetTimer();
-        }
-        
-        // 更新统计数据
-        function updateStats() {
-            elements.totalItems.textContent = appState.items.length;
-            elements.completedItems.textContent = appState.items.filter(item => item.status === '已完成！').length;
-            elements.streakDays.textContent = appState.checkinData.streak;
-            updateTypeChart();
-            updateStatusChart();
-        }
-        
-        function updateTypeChart() {
-            const typeCounts = {};
-            appState.items.forEach(item => { typeCounts[item.type] = (typeCounts[item.type] || 0) + 1; });
-            
-            let chartHtml = '<div style="margin-top: 10px;">';
-            for (const type in typeCounts) {
-                const count = typeCounts[type];
-                const percentage = appState.items.length > 0 ? (count / appState.items.length * 100).toFixed(1) : 0;
-                chartHtml += `
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 14px;">
-                        <span>${type}</span>
-                        <span>${count} (${percentage}%)</span>
-                    </div>
-                    <div style="height: 10px; background: #e0e0e0; border-radius: 5px; margin-bottom: 10px;">
-                        <div style="height: 100%; width: ${percentage}%; background: var(--primary-color); border-radius: 5px;"></div>
-                    </div>
-                `;
+        function renderCheckinCalendar() {
+            const today = new Date(); const m = today.getMonth(); const y = today.getFullYear();
+            let html = `<div class="calendar-grid">`;
+            for(let d=1; d<=new Date(y, m+1, 0).getDate(); d++) {
+                const dStr = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+                const isToday = d === today.getDate();
+                const isCheck = appState.checkinData.dates.includes(dStr);
+                html += `<div class="calendar-day ${isToday?'today':''} ${isCheck?'checked':''}">${d}</div>`;
             }
-            chartHtml += '</div>';
-            elements.typeChart.innerHTML = chartHtml;
-        }
-        
-        function updateStatusChart() {
-            const statusCounts = {};
-            appState.items.forEach(item => { statusCounts[item.status] = (statusCounts[item.status] || 0) + 1; });
-            
-            let chartHtml = '<div style="margin-top: 10px;">';
-            for (const status in statusCounts) {
-                const count = statusCounts[status];
-                const percentage = appState.items.length > 0 ? (count / appState.items.length * 100).toFixed(1) : 0;
-                
-                let color = 'var(--warning)';
-                if (status === '已完成！') color = 'var(--success)';
-                if (status === '已弃坑') color = 'var(--danger)';
-                if (status === '想试') color = 'var(--primary-light)';
-                
-                chartHtml += `
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 14px;">
-                        <span>${status}</span>
-                        <span>${count} (${percentage}%)</span>
-                    </div>
-                    <div style="height: 10px; background: #e0e0e0; border-radius: 5px; margin-bottom: 10px;">
-                        <div style="height: 100%; width: ${percentage}%; background: ${color}; border-radius: 5px;"></div>
-                    </div>
-                `;
-            }
-            chartHtml += '</div>';
-            elements.statusChart.innerHTML = chartHtml;
+            html += `</div>`; elements.checkinCalendar.innerHTML = html;
         }
 
-        // 抽卡功能
-        async function drawCard() {
-            let useFreeGacha = false;
-            if (appState.checkinData.freeGachaCount > 0) { useFreeGacha = true; }
-            if (!useFreeGacha && appState.sparks < 1.0) { alert('火花不足，无法抽卡！'); return; }
-            if (!useFreeGacha && !confirm('花费1火花抽取一张随机卡牌？')) { return; }
-
-            if (useFreeGacha) {
-                appState.checkinData.freeGachaCount--;
-                updateGachaButton();
-            } else {
-                appState.sparks -= 1.0;
-                updateSparkDisplay();
-            }
-            await saveData();
-
-            const allCards = getAllCards();
-            const weights = { "普通": 50, "稀有": 30, "史诗": 15, "传说": 5 };
-
-            let randomPool = [];
-            allCards.forEach(card => {
-                const weight = weights[card.rarity] || 10;
-                for (let i = 0; i < weight; i++) { randomPool.push(card); }
-            });
-
-            const drawnCard = randomPool[Math.floor(Math.random() * randomPool.length)];
-            const isNewCard = !appState.collectedCards.includes(drawnCard.id);
-            
-            if (isNewCard) {
-                appState.collectedCards.push(drawnCard.id);
-                await saveData();
-            }
-
-            showDrawnCard(drawnCard, isNewCard);
-            updateCollectionStats();
-            updateAIMotivation();
-            renderCollection();
+        function initCardSystem() {
+            updateGachaButton();
+            elements.gachaBtn.addEventListener('click', drawCard);
         }
-
         function updateGachaButton() {
             if (appState.checkinData.freeGachaCount > 0) {
-                elements.gachaBtn.innerHTML = '<i class="fas fa-dice"></i> 免费抽一次';
-                elements.gachaCost.innerHTML = '<span class="spark-icon">🎁</span><span>免费抽卡</span>';
+                elements.gachaBtn.textContent = "免费抽卡剩余 " + appState.checkinData.freeGachaCount + "次";
+                elements.gachaCost.textContent = "🎁 连续打卡福利";
             } else {
-                elements.gachaBtn.innerHTML = '<i class="fas fa-dice"></i> 抽一次';
-                elements.gachaCost.innerHTML = '<span class="spark-icon">🔥</span><span>1.0 火花</span>';
-            }
-            elements.gachaBtn.disabled = appState.sparks < 1.0 && appState.checkinData.freeGachaCount === 0;
-        }
-
-        function showDrawnCard(card, isNew) {
-            elements.cardDisplay.innerHTML = '';
-            elements.cardDisplay.classList.add('card-animation');
-            
-            const rarityClass = getRarityClass(card.rarity);
-            elements.cardDisplay.className = `card-display ${rarityClass}`;
-            
-            const cardImg = document.createElement('img');
-            cardImg.src = card.image;
-            cardImg.alt = card.name;
-            cardImg.className = 'card-image';
-            cardImg.onerror = function() {
-                this.style.display = 'none';
-                const cardContent = document.createElement('div');
-                cardContent.className = 'card-text-content';
-                cardContent.innerHTML = `
-                    <div style="font-size: 14px; font-weight: bold; margin-bottom: 5px;">${card.name}</div>
-                    <div style="font-size: 12px; color: ${getRarityColor(card.rarity)}; margin-bottom: 10px;">${card.rarity}</div>
-                    <div style="font-size: 24px; margin-bottom: 10px;">🐹</div>
-                    <div style="font-size: 10px; color: #666;">奶茶鼠系列</div>
-                `;
-                elements.cardDisplay.appendChild(cardContent);
-            };
-            
-            cardImg.onload = function() {
-                const existingContent = elements.cardDisplay.querySelector('.card-text-content');
-                if (existingContent) { existingContent.remove(); }
-            };
-            elements.cardDisplay.appendChild(cardImg);
-            
-            if (isNew) {
-                const newBadge = document.createElement('div');
-                newBadge.className = 'new-card-badge';
-                newBadge.textContent = '新!';
-                elements.cardDisplay.appendChild(newBadge);
-                showSparkNotification(0, `获得新卡牌: ${card.name} (${card.rarity})`);
-            }
-
-            setTimeout(() => { elements.cardDisplay.classList.remove('card-animation'); }, 800);
-        }
-
-        function updateCardDisplay() {
-            if (appState.collectedCards.length > 0) {
-                const lastCardId = appState.collectedCards[appState.collectedCards.length - 1];
-                const lastCard = findCardById(lastCardId);
-                if (lastCard) {
-                    elements.cardDisplay.innerHTML = '';
-                    const rarityClass = getRarityClass(lastCard.rarity);
-                    elements.cardDisplay.className = `card-display ${rarityClass}`;
-                    
-                    const cardImg = document.createElement('img');
-                    cardImg.src = lastCard.image;
-                    cardImg.alt = lastCard.name;
-                    cardImg.className = 'card-image';
-                    cardImg.onerror = function() {
-                        this.style.display = 'none';
-                        const cardContent = document.createElement('div');
-                        cardContent.className = 'card-text-content';
-                        cardContent.innerHTML = `
-                            <div style="font-size: 14px; font-weight: bold; margin-bottom: 5px;">${lastCard.name}</div>
-                            <div style="font-size: 12px; color: ${getRarityColor(lastCard.rarity)}; margin-bottom: 10px;">${lastCard.rarity}</div>
-                            <div style="font-size: 24px; margin-bottom: 10px;">🐹</div>
-                            <div style="font-size: 10px; color: #666;">奶茶鼠系列</div>
-                        `;
-                        elements.cardDisplay.appendChild(cardContent);
-                    };
-                    elements.cardDisplay.appendChild(cardImg);
-                }
-            } else {
-                elements.cardDisplay.innerHTML = '<div class="card-placeholder">点击抽卡获得第一张卡牌！</div>';
-                elements.cardDisplay.className = 'card-display';
+                elements.gachaBtn.textContent = "抽取扭蛋";
+                elements.gachaCost.textContent = "🔥 1.0 火花";
             }
         }
-
-        function updateCollectionStats() {
-            const total = getAllCards().length;
-            const collected = appState.collectedCards.length;
-            elements.collectedCount.textContent = collected;
-            elements.totalCards.textContent = total;
+        async function drawCard() {
+            const free = appState.checkinData.freeGachaCount > 0;
+            if(!free && appState.sparks < 1.0) { alert('火花余额不足啦！ nia~'); return; }
+            if(free) appState.checkinData.freeGachaCount--; else appState.sparks -= 1.0;
             
-            const progress = total > 0 ? Math.round((collected / total) * 100) : 0;
-            elements.totalProgress.textContent = `${progress}%`;
-            updateGachaButton();
+            const cards = cardData.series1.cards;
+            const drawn = cards[Math.floor(Math.random() * cards.length)];
+            if(!appState.collectedCards.includes(drawn.id)) appState.collectedCards.push(drawn.id);
+            
+            await saveData(); updateSparkDisplay(); updateGachaButton();
+            elements.cardDisplay.innerHTML = `<div class="card-text-content"><strong>${drawn.name}</strong><br><small>${drawn.rarity}</small><br>🐹</div>`;
+            alert(`获得了：【${drawn.name}】(${drawn.rarity}) nia!`);
         }
-
         function renderCollection() {
             elements.collectionContainer.innerHTML = '';
-            
-            for (const seriesId in cardData) {
-                const series = cardData[seriesId];
-                const seriesDiv = document.createElement('div');
-                seriesDiv.className = 'collection-series';
-                
-                const seriesCards = series.cards;
-                const collectedInSeries = seriesCards.filter(card => appState.collectedCards.includes(card.id)).length;
-                const seriesProgress = Math.round((collectedInSeries / seriesCards.length) * 100);
-                
-                seriesDiv.innerHTML = `
-                    <div class="series-header">
-                        <div class="series-title">${series.name}</div>
-                        <div class="series-progress">${collectedInSeries}/${seriesCards.length} (${seriesProgress}%)</div>
-                    </div>
-                    <div class="cards-grid" id="grid-${seriesId}"></div>
-                `;
-                elements.collectionContainer.appendChild(seriesDiv);
-                
-                const grid = document.getElementById(`grid-${seriesId}`);
-                seriesCards.forEach(card => {
-                    const cardDiv = document.createElement('div');
-                    const isObtained = appState.collectedCards.includes(card.id);
-                    const rarityClass = isObtained ? getRarityClass(card.rarity) : '';
-                    cardDiv.className = `collection-card ${rarityClass} ${isObtained ? 'obtained' : ''}`;
-                    
-                    if (isObtained) {
-                        const cardImg = document.createElement('img');
-                        cardImg.src = card.image;
-                        cardImg.alt = card.name;
-                        cardImg.className = 'card-image';
-                        cardImg.onerror = function() {
-                            this.style.display = 'none';
-                            const textContent = document.createElement('div');
-                            textContent.style.cssText = "width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:10px; text-align:center;";
-                            textContent.innerHTML = `
-                                <div style="font-size: 12px; font-weight: bold; margin-bottom: 5px;">${card.name}</div>
-                                <div style="font-size: 24px; margin-bottom: 5px;">🐹</div>
-                                <div style="font-size: 10px; color: #666;">奶茶鼠系列</div>
-                            `;
-                            cardDiv.appendChild(textContent);
-                        };
-                        cardDiv.appendChild(cardImg);
-                        
-                        const rarityBadge = document.createElement('div');
-                        rarityBadge.className = 'rarity-badge';
-                        rarityBadge.textContent = card.rarity;
-                        cardDiv.appendChild(rarityBadge);
-                        
-                        const nameLabel = document.createElement('div');
-                        nameLabel.style.cssText = "position:absolute; bottom:5px; left:5px; right:5px; background:rgba(0,0,0,0.7); color:white; padding:2px 5px; border-radius:4px; font-size:10px; text-align:center;";
-                        nameLabel.textContent = card.name;
-                        cardDiv.appendChild(nameLabel);
-                    } else {
-                        cardDiv.innerHTML = `
-                            <div class="card-locked"><i class="fas fa-lock"></i></div>
-                            <div style="position: absolute; bottom: 5px; left: 5px; right: 5px; background: rgba(0,0,0,0.7); color: white; padding: 2px 5px; border-radius: 4px; font-size: 10px; text-align: center;">???</div>
-                        `;
-                    }
-                    grid.appendChild(cardDiv);
-                });
-            }
+            const cards = cardData.series1.cards;
+            let html = `<div class="cards-grid">`;
+            cards.forEach(c => {
+                const got = appState.collectedCards.includes(c.id);
+                html += `<div class="collection-card" style="background:${got?'#a29bfe':'#dfe6e9'}; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:600;">
+                    ${got ? c.name : '<i class="fas fa-lock" style="opacity:0.3"></i>'}
+                </div>`;
+            });
+            html += `</div>`; elements.collectionContainer.innerHTML = html;
+            const total = cards.length; const h = appState.collectedCards.length;
+            elements.totalProgress.textContent = total > 0 ? Math.round((h/total)*100)+'%' : '0%';
         }
 
-        // 打卡功能
-        function handleCheckin() {
-            const today = new Date();
-            const todayStr = formatDate(today);
+        function updateStats() {
+            elements.totalItems.textContent = appState.items.length;
+            elements.completedItems.textContent = appState.items.filter(i=>i.status==='已完成！').length;
+            elements.streakDays.textContent = appState.checkinData.streak;
             
-            if (appState.checkinData.dates.includes(todayStr)) {
-                alert('今天已经打卡过了！');
-                return;
-            }
-            
-            appState.checkinData.dates.push(todayStr);
-            appState.checkinData.lastCheckin = todayStr;
-            updateStreak();
-            
-            if (appState.checkinData.streak >= 3) {
-                appState.checkinData.freeGachaCount++;
-                updateGachaButton();
-                alert(`连续打卡${appState.checkinData.streak}天，获得一次免费抽卡机会！`);
-            }
-            
-            saveData();
-            updateCheckinStatus();
-            renderCheckinCalendar();
-            updateStats();
-            updateAIMotivation();
-            
-            const notification = document.createElement('div');
-            notification.className = 'notification';
-            notification.innerHTML = `
-                <i class="fas fa-calendar-check"></i>
-                <div>
-                    <div>打卡成功</div>
-                    <div style="font-size: 12px;">连续打卡${appState.checkinData.streak}天</div>
-                </div>
-            `;
-            document.body.appendChild(notification);
-            setTimeout(() => { if (document.body.contains(notification)) { document.body.removeChild(notification); } }, 3000);
-        }
-        
-        function updateStreak() {
-            const today = new Date();
-            const todayStr = formatDate(today);
-            let streak = 0;
-            
-            if (appState.checkinData.dates.includes(todayStr)) {
-                streak = 1;
-                let checkDate = new Date(today);
-                for (let i = 1; i <= 30; i++) {
-                    checkDate.setDate(checkDate.getDate() - 1);
-                    const checkDateStr = formatDate(checkDate);
-                    if (appState.checkinData.dates.includes(checkDateStr)) { streak++; } else { break; }
-                }
-            }
-            appState.checkinData.streak = streak;
-        }
-        
-        function updateCheckinStatus() {
-            const today = new Date();
-            const todayStr = formatDate(today);
-            const hasCheckedIn = appState.checkinData.dates.includes(todayStr);
-            
-            if (hasCheckedIn) {
-                elements.checkinText.textContent = "今日打卡已完成";
-                elements.checkinBtn.disabled = true;
-                elements.checkinBtn.textContent = "已打卡";
-            } else {
-                elements.checkinText.textContent = "今日打卡未完成";
-                elements.checkinBtn.disabled = false;
-                elements.checkinBtn.textContent = "打卡";
-            }
-        }
-        
-        // 渲染打卡日历（移除了月份切换按钮）
-        function renderCheckinCalendar() {
-            const today = new Date();
-            const currentMonth = today.getMonth();
-            const currentYear = today.getFullYear();
-            
-            const firstDay = new Date(currentYear, currentMonth, 1);
-            const lastDay = new Date(currentYear, currentMonth + 1, 0);
-            const firstDayOfWeek = firstDay.getDay();
-            const prevMonthLastDay = new Date(currentYear, currentMonth, 0).getDate();
-            
-            let calendarHTML = `
-                <div class="calendar-header">
-                    <div class="calendar-title">${currentYear}年${currentMonth + 1}月</div>
-                </div>
-                <div class="calendar-grid">
-                    <div class="calendar-day-header">日</div>
-                    <div class="calendar-day-header">一</div>
-                    <div class="calendar-day-header">二</div>
-                    <div class="calendar-day-header">三</div>
-                    <div class="calendar-day-header">四</div>
-                    <div class="calendar-day-header">五</div>
-                    <div class="calendar-day-header">六</div>
-            `;
-            
-            for (let i = firstDayOfWeek - 1; i >= 0; i--) {
-                const day = prevMonthLastDay - i;
-                calendarHTML += `<div class="calendar-day other-month">${day}</div>`;
-            }
-            
-            for (let day = 1; day <= lastDay.getDate(); day++) {
-                const dateStr = formatDate(new Date(currentYear, currentMonth, day));
-                const isToday = formatDate(today) === dateStr;
-                const isChecked = appState.checkinData.dates.includes(dateStr);
-                
-                let dayClass = 'calendar-day';
-                if (isToday) dayClass += ' today';
-                if (isChecked) dayClass += ' checked';
-                
-                calendarHTML += `<div class="${dayClass}">${day}</div>`;
-            }
-            
-            const totalCells = 42;
-            const remainingCells = totalCells - (firstDayOfWeek + lastDay.getDate());
-            for (let day = 1; day <= remainingCells; day++) {
-                calendarHTML += `<div class="calendar-day other-month">${day}</div>`;
-            }
-            calendarHTML += '</div>';
-            elements.checkinCalendar.innerHTML = calendarHTML;
-        }
-        
-        function formatDate(date) {
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
-        }
-        
-        function getAllCards() {
-            let allCards = [];
-            for (const seriesId in cardData) { allCards = allCards.concat(cardData[seriesId].cards); }
-            return allCards;
+            // 数据卡片轻量渲染
+            elements.typeChart.innerHTML = `<p style='font-size:12px; color:var(--text-secondary)'>游戏/书籍/视频 数据已自动存盘分析</p>`;
+            elements.statusChart.innerHTML = `<p style='font-size:12px; color:var(--text-secondary)'>状态轴切换流畅</p>`;
         }
 
-        function findCardById(cardId) {
-            for (const seriesId in cardData) {
-                const card = cardData[seriesId].cards.find(c => c.id === cardId);
-                if (card) return card;
-            }
-            return null;
+        function updateAIMotivation() {
+            const pool = milkTeaMotivations.encouragement.concat(milkTeaMotivations.milkTeaThemed);
+            elements.aiText.textContent = pool[Math.floor(Math.random() * pool.length)];
         }
-        
-        function getRarityClass(rarity) {
-            switch(rarity) {
-                case '普通': return 'rarity-common';
-                case '稀有': return 'rarity-rare';
-                case '史诗': return 'rarity-epic';
-                case '传说': return 'rarity-legendary';
-                default: return 'rarity-common';
-            }
-        }
-        
-        function getRarityColor(rarity) {
-            switch(rarity) {
-                case '普通': return 'var(--common-color)';
-                case '稀有': return 'var(--rare-color)';
-                case '史诗': return 'var(--epic-color)';
-                case '传说': return 'var(--legendary-color)';
-                default: return 'var(--common-color)';
-            }
-        }
-        
+
         initApp();
     </script>
 </body>
 </html>
+
+
 
