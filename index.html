@@ -173,25 +173,10 @@
             transform: scale(0.97);
         }
 
-        .btn-primary {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        .btn-success {
-            background-color: var(--success);
-            color: white;
-        }
-
-        .btn-warning {
-            background-color: var(--warning);
-            color: white;
-        }
-
-        .btn-danger {
-            background-color: var(--danger);
-            color: white;
-        }
+        .btn-primary { background-color: var(--primary-color); color: white; }
+        .btn-success { background-color: var(--success); color: white; }
+        .btn-warning { background-color: var(--warning); color: white; }
+        .btn-danger { background-color: var(--danger); color: white; }
 
         /* 双列作品卡片布局 */
         #items-container {
@@ -256,13 +241,6 @@
         .tag-priority { background-color: #74b9ff; color: white; }
         .tag-context { background-color: #a29bfe; color: white; }
 
-        .item-rating {
-            margin-top: 4px;
-            color: var(--warning);
-            font-size: 11px;
-            font-weight: bold;
-        }
-
         .item-comment {
             margin-top: 6px;
             font-style: italic;
@@ -285,7 +263,7 @@
             -webkit-line-clamp: unset;
         }
 
-        /* 选择器页签特定样式 */
+        /* 选择器页签样式 */
         .selector-filter-group {
             margin-bottom: 15px;
         }
@@ -398,7 +376,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            font-size: 20px;
         }
 
         .ai-text {
@@ -416,8 +394,9 @@
         /* 统计卡片 */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: 10px;
+            margin-bottom: 15px;
         }
 
         .stat-card {
@@ -449,20 +428,10 @@
             gap: 10px;
         }
 
-        .reward-item:last-child {
-            border-bottom: none;
-        }
+        .reward-item:last-child { border-bottom: none; }
 
-        .reward-info h4 {
-            font-size: 15px;
-            margin-bottom: 3px;
-            font-weight: 600;
-        }
-
-        .reward-info p {
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
+        .reward-info h4 { font-size: 15px; margin-bottom: 3px; font-weight: 600; }
+        .reward-info p { font-size: 12px; color: var(--text-secondary); }
 
         .reward-action-group {
             display: flex;
@@ -540,29 +509,11 @@
             margin-bottom: 20px;
         }
 
-        .modal-title {
-            font-size: 18px;
-            font-weight: 600;
-        }
+        .modal-title { font-size: 18px; font-weight: 600; }
+        .close-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text-primary); }
 
-        .close-btn {
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            color: var(--text-primary);
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 500;
-        }
-
+        .form-group { margin-bottom: 15px; }
+        .form-label { display: block; margin-bottom: 5px; font-weight: 500; }
         .form-input, .form-select, .form-textarea {
             width: 100%;
             padding: 12px;
@@ -572,11 +523,7 @@
             background-color: var(--surface);
             -webkit-appearance: none;
         }
-
-        .form-textarea {
-            height: 90px;
-            resize: vertical;
-        }
+        .form-textarea { height: 90px; resize: vertical; }
 
         .checkbox-group {
             display: flex;
@@ -584,20 +531,11 @@
             gap: 10px;
             margin-top: 5px;
         }
+        .checkbox-label { display: flex; align-items: center; gap: 5px; font-size: 14px; cursor: pointer; }
 
-        .checkbox-label {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 14px;
-            cursor: pointer;
-        }
-
-        /* 通知 */
         .notification {
             position: fixed;
-            top: 20px;
-            right: 20px;
+            top: 20px; right: 20px;
             background-color: var(--success);
             color: white;
             padding: 12px 16px;
@@ -608,14 +546,12 @@
             align-items: center;
             animation: slideInRight 0.5s, fadeOut 0.5s 2.5s forwards;
         }
-
         .notification i { margin-right: 8px; }
 
         @keyframes slideInRight {
             from { transform: translateX(100%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
         }
-
         @keyframes fadeOut {
             from { opacity: 1; }
             to { opacity: 0; }
@@ -623,8 +559,7 @@
 
         .storage-status {
             position: fixed;
-            bottom: 70px;
-            left: 0; right: 0;
+            bottom: 70px; left: 0; right: 0;
             background: var(--warning);
             color: white;
             padding: 8px;
@@ -633,38 +568,6 @@
             z-index: 99;
             display: none;
         }
-
-        /* 打卡日历 */
-        .checkin-calendar { margin-top: 15px; }
-        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .calendar-title { font-size: 16px; font-weight: 600; }
-        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
-        .calendar-day-header { text-align: center; font-size: 12px; color: var(--text-secondary); padding: 5px 0; }
-        .calendar-day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-size: 14px; }
-        .calendar-day.checked { background-color: var(--success); color: white; }
-        .calendar-day.today { border: 2px solid var(--primary-color); }
-        .calendar-day.other-month { color: #ccc; }
-        
-        .checkin-status {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-top: 15px;
-            padding: 10px 15px;
-            background: rgba(255,255,255,0.2);
-            border-radius: var(--border-radius);
-        }
-
-        .checkin-btn {
-            background: var(--success);
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 14px;
-            cursor: pointer;
-        }
-        .checkin-btn:disabled { background: #ccc; cursor: not-allowed; }
     </style>
 </head>
 <body>
@@ -687,29 +590,24 @@
                         <h3>奶茶鼠助手</h3>
                     </div>
                     <div class="ai-text" id="ai-text">
-                        欢迎使用Spark Journal！开始记录你的第一个作品吧！
-                    </div>
-                    <div class="checkin-status" id="checkin-status">
-                        <span id="checkin-text">今日打卡未完成</span>
-                        <button class="checkin-btn" id="checkin-btn">打卡</button>
+                        欢迎使用Spark Journal！
                     </div>
                     <div class="ai-hint">
-                        <i class="fas fa-sync-alt"></i> 点击刷新激励语
+                        <i class="fas fa-sync-alt"></i> 点击刷新激励语与随机头像
                     </div>
                 </div>
             </div>
 
-            <!-- 页签1：智能时间管理选择器 (首页) -->
+            <!-- 页签1：智能时间管理选择器 -->
             <div class="page active" id="selector-page">
                 <div class="section">
                     <h2 class="section-title">
                         <i class="fas fa-magic"></i> 智能时间管理选择器
                     </h2>
                     <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 15px;">
-                        勾选当前场景、精力与可用时间，系统将按优先级权重为你智能推荐作品！
+                        仅从<b>“在搞”</b>状态的作品中，按场景、精力、时间及优先级权重为你摇号推荐！
                     </p>
 
-                    <!-- 场景筛选 -->
                     <div class="selector-filter-group">
                         <span class="filter-label">1. 当前场景 (可多选)</span>
                         <div class="filter-chips" id="filter-scene">
@@ -719,7 +617,6 @@
                         </div>
                     </div>
 
-                    <!-- 精力筛选 -->
                     <div class="selector-filter-group">
                         <span class="filter-label">2. 当前精力 (可多选)</span>
                         <div class="filter-chips" id="filter-energy">
@@ -729,7 +626,6 @@
                         </div>
                     </div>
 
-                    <!-- 时间筛选 -->
                     <div class="selector-filter-group">
                         <span class="filter-label">3. 可用时间 (单选)</span>
                         <div class="filter-chips" id="filter-time">
@@ -745,15 +641,6 @@
                     </button>
 
                     <div id="picker-result-container"></div>
-                </div>
-
-                <div class="section">
-                    <h2 class="section-title">
-                        <i class="fas fa-history"></i> 摇号历史记录
-                    </h2>
-                    <div id="picker-history-list">
-                        <div style="text-align: center; color: var(--text-secondary); padding: 15px; font-size: 13px;">暂无摇号记录</div>
-                    </div>
                 </div>
             </div>
 
@@ -808,7 +695,7 @@
                 </div>
             </div>
 
-            <!-- 页签4：统计与奖励 -->
+            <!-- 页签4：统计、历史与奖励 -->
             <div class="page" id="stats-page">
                 <div class="section">
                     <h2 class="section-title">
@@ -823,20 +710,19 @@
                             <div class="stat-value" id="completed-items">0</div>
                             <div class="stat-label">已完成</div>
                         </div>
-                        <div class="stat-card">
-                            <div class="stat-value" id="streak-days">0</div>
-                            <div class="stat-label">连续打卡</div>
-                        </div>
+                    </div>
+                </div>
+
+                <!-- 摇号历史记录面板 (从第一页搬到这里) -->
+                <div class="section">
+                    <h2 class="section-title">
+                        <i class="fas fa-history"></i> 摇号历史记录
+                    </h2>
+                    <div id="picker-history-list">
+                        <div style="text-align: center; color: var(--text-secondary); padding: 15px; font-size: 13px;">暂无摇号记录</div>
                     </div>
                 </div>
                 
-                <div class="section">
-                    <h2 class="section-title">
-                        <i class="fas fa-calendar-check"></i> 打卡日历
-                    </h2>
-                    <div class="checkin-calendar" id="checkin-calendar"></div>
-                </div>
-
                 <div class="section">
                     <h2 class="section-title">
                         <i class="fas fa-gift"></i> 奖励与惩罚兑换
@@ -899,7 +785,7 @@
             </a>
             <a href="#" class="nav-item" data-page="stats-page">
                 <i class="fas fa-chart-bar nav-icon"></i>
-                <span>统计与奖励</span>
+                <span>统计与历史</span>
             </a>
         </nav>
     </div>
@@ -939,7 +825,6 @@
                     </select>
                 </div>
 
-                <!-- 新增标签：场景（多选） -->
                 <div class="form-group">
                     <label class="form-label">适用场景 (可多选)</label>
                     <div class="checkbox-group">
@@ -949,7 +834,6 @@
                     </div>
                 </div>
 
-                <!-- 新增标签：精力（多选） -->
                 <div class="form-group">
                     <label class="form-label">精力要求 (可多选)</label>
                     <div class="checkbox-group">
@@ -959,7 +843,6 @@
                     </div>
                 </div>
 
-                <!-- 新增标签：时间（单选） -->
                 <div class="form-group">
                     <label class="form-label" for="item-timecost">时间开销</label>
                     <select class="form-select" id="item-timecost">
@@ -969,7 +852,6 @@
                     </select>
                 </div>
 
-                <!-- 新增标签：优先级（0-3） -->
                 <div class="form-group">
                     <label class="form-label" for="item-priority">优先级 (权重: 3级最高)</label>
                     <select class="form-select" id="item-priority">
@@ -1001,14 +883,18 @@
             driver: [localforage.INDEXEDDB, localforage.WEBSQL, localforage.LOCALSTORAGE]
         });
 
+        // 随机头像图库列表
+        const avatarPool = ["🐹", "🥤", "✨", "🔥", "🐱", "☕", "🍀", "🎨", "🚀", "💡"];
+
         const milkTeaMotivations = {
             welcome: [
-                "欢迎来到Spark Journal啦~ 选择器随时准备为你摇出心仪的作品！🥤",
-                "让奶茶鼠带你体验全新的智能时间管理选择器吧~ nia！"
+                "欢迎来到Spark Journal！今天准备推进哪个在搞的项目呢？🥤",
+                "选择器随时准备为你摇出心仪的在搞作品~ nia！",
+                "保持节奏，让奶茶鼠陪你一起高效搞定作品吧！✨"
             ],
             empty: [
-                "你的作品库空空如也，快去作品库加点带标签的作品吧，nia",
-                "没有记录的作品怎么摇？快加点料吧！🥤"
+                "你的作品库里还没有处于'在搞'状态的作品哦，快去加一个并设为在搞吧，nia！",
+                "没有在搞的项目怎么摇？快去作品库开启新项目吧！🥤"
             ]
         };
 
@@ -1016,8 +902,7 @@
             items: [],
             sparks: 0.0,
             timer: { isRunning: false, timeLeft: 25 * 60, interval: null },
-            checkinData: { dates: [], streak: 0, lastCheckin: null },
-            pickerHistory: [], // 摇号历史记录
+            pickerHistory: [],
             selectorFilters: {
                 scenes: [],
                 energies: [],
@@ -1044,16 +929,11 @@
             claimSparks: document.getElementById('claim-sparks'),
             totalItems: document.getElementById('total-items'),
             completedItems: document.getElementById('completed-items'),
-            streakDays: document.getElementById('streak-days'),
             storageStatus: document.getElementById('storage-status'),
-            checkinCalendar: document.getElementById('checkin-calendar'),
-            checkinStatus: document.getElementById('checkin-status'),
-            checkinText: document.getElementById('checkin-text'),
-            checkinBtn: document.getElementById('checkin-btn'),
             aiMotivation: document.getElementById('ai-motivation'),
             aiText: document.getElementById('ai-text'),
+            aiAvatar: document.getElementById('ai-avatar'),
             
-            // 选择器相关
             btnPickRandom: document.getElementById('btn-pick-random'),
             pickerResultContainer: document.getElementById('picker-result-container'),
             pickerHistoryList: document.getElementById('picker-history-list'),
@@ -1072,8 +952,6 @@
             setupEventListeners();
             updateStats();
             updateAIMotivation();
-            renderCheckinCalendar();
-            updateCheckinStatus();
             renderPickerHistory();
             showStorageStatus("数据加载完成！");
         }
@@ -1082,12 +960,10 @@
             try {
                 const items = await storage.getItem('items');
                 const sparks = await storage.getItem('sparks');
-                const checkinData = await storage.getItem('checkinData');
                 const pickerHistory = await storage.getItem('pickerHistory');
                 
                 if (items) appState.items = items;
                 if (sparks) appState.sparks = parseFloat(sparks);
-                if (checkinData) appState.checkinData = checkinData;
                 if (pickerHistory) appState.pickerHistory = pickerHistory;
             } catch (error) {
                 console.error("加载数据失败:", error);
@@ -1098,7 +974,6 @@
             try {
                 await storage.setItem('items', appState.items);
                 await storage.setItem('sparks', appState.sparks.toString());
-                await storage.setItem('checkinData', appState.checkinData);
                 await storage.setItem('pickerHistory', appState.pickerHistory);
                 return true;
             } catch (error) {
@@ -1125,7 +1000,6 @@
             });
             
             elements.aiMotivation.addEventListener('click', updateAIMotivation);
-            elements.checkinBtn.addEventListener('click', handleCheckin);
             
             elements.addItemBtn.addEventListener('click', () => {
                 elements.addItemModal.style.display = 'flex';
@@ -1136,21 +1010,17 @@
             
             elements.itemForm.addEventListener('submit', handleFormSubmit);
             
-            // 选择器标签多选/单选交互
             setupFilterChips('filter-scene', 'scenes', true);
             setupFilterChips('filter-energy', 'energies', true);
             setupFilterChips('filter-time', 'time', false);
 
-            // 摇号按钮
             elements.btnPickRandom.addEventListener('click', handleWeightedPick);
 
-            // 计时器
             elements.startTimer.addEventListener('click', startTimer);
             elements.pauseTimer.addEventListener('click', pauseTimer);
             elements.resetTimer.addEventListener('click', resetTimer);
             elements.claimSparks.addEventListener('click', claimSparks);
             
-            // 奖励按钮
             elements.btnEarnEat.addEventListener('click', async () => {
                 appState.sparks += 0.1;
                 updateSparkDisplay();
@@ -1203,26 +1073,23 @@
             });
         }
 
-        // 加权轮盘推荐算法核心
+        // 加权轮盘推荐算法（强制限定状态为“在搞”）
         function handleWeightedPick() {
             const { scenes, energies, time } = appState.selectorFilters;
             
-            // 过滤符合条件的作品（未弃坑、非已完成）
             const candidates = appState.items.filter(item => {
-                if (item.status === '已完成！' || item.status === '已弃坑') return false;
+                // 核心限制：状态必须是“在搞”
+                if (item.status !== '在搞') return false;
                 
-                // 时间匹配（如果选了全部或匹配）
                 if (time !== 'All' && time !== '全部' && item.timeCost && item.timeCost !== time) {
                     return false;
                 }
                 
-                // 场景匹配（若用户勾选了场景，作品必须包含其中至少一个）
                 if (scenes.length > 0) {
                     const hasScene = item.scenes && item.scenes.some(s => scenes.includes(s));
                     if (!hasScene) return false;
                 }
 
-                // 精力匹配（若用户勾选了精力，作品必须包含其中至少一个）
                 if (energies.length > 0) {
                     const hasEnergy = item.energies && item.energies.some(e => energies.includes(e));
                     if (!hasEnergy) return false;
@@ -1234,14 +1101,13 @@
             if (candidates.length === 0) {
                 elements.pickerResultContainer.innerHTML = `
                     <div class="picker-result-box" style="background: #e17055;">
-                        <h3>没有找到符合条件的作品</h3>
-                        <p style="font-size: 13px; margin-top: 5px;">请尝试放宽筛选条件，或在作品库中为作品添加标签！</p>
+                        <h3>没有找到符合条件的“在搞”作品</h3>
+                        <p style="font-size: 13px; margin-top: 5px;">请确保作品状态设为“在搞”并放宽标签筛选条件！</p>
                     </div>
                 `;
                 return;
             }
 
-            // 构建加权池：优先级 3(权重4), 2(权重3), 1(权重2), 0(权重1)
             let weightedPool = [];
             candidates.forEach(item => {
                 const priority = parseInt(item.priority !== undefined ? item.priority : 3);
@@ -1251,10 +1117,8 @@
                 }
             });
 
-            // 随机抽取
             const picked = weightedPool[Math.floor(Math.random() * weightedPool.length)];
 
-            // 记录历史（精确到日期和时间）
             const now = new Date();
             const timeStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
             
@@ -1272,19 +1136,17 @@
             };
 
             appState.pickerHistory.unshift(historyEntry);
-            if (appState.pickerHistory.length > 50) appState.pickerHistory.pop(); // 最多存50条
+            if (appState.pickerHistory.length > 50) appState.pickerHistory.pop();
             saveData();
             renderPickerHistory();
 
-            // 渲染推荐结果
             elements.pickerResultContainer.innerHTML = `
                 <div class="picker-result-box">
-                    <div style="font-size: 12px; opacity: 0.9; margin-bottom: 5px;">🎉 为你摇出了最契合的作品：</div>
+                    <div style="font-size: 12px; opacity: 0.9; margin-bottom: 5px;">🎉 为你摇出了最契合的“在搞”作品：</div>
                     <h3 style="font-size: 20px; margin-bottom: 8px;">${picked.title}</h3>
                     <div style="display: flex; justify-content: center; gap: 8px; font-size: 12px;">
                         <span style="background: rgba(0,0,0,0.2); padding: 2px 8px; border-radius: 10px;">类型: ${picked.type}</span>
-                        <span style="background: rgba(0,0,0,0.2); padding: 2px 8px; border-radius: 10px;">优先级: ${picked.priority}级</span>
-                        <span style="background: rgba(0,0,0,0.2); padding: 2px 8px; border-radius: 10px;">状态: ${picked.status}</span>
+                        <span style="background: rgba(0,0,0,0.2); padding: 2px 8px; border-radius: 10px;">优先级: P${picked.priority}</span>
                     </div>
                 </div>
             `;
@@ -1315,8 +1177,13 @@
         }
 
         function updateAIMotivation() {
-            const pool = appState.items.length === 0 ? milkTeaMotivations.empty : milkTeaMotivations.welcome;
+            const doingItems = appState.items.filter(i => i.status === '在搞');
+            const pool = doingItems.length === 0 ? milkTeaMotivations.empty : milkTeaMotivations.welcome;
             elements.aiText.textContent = pool[Math.floor(Math.random() * pool.length)];
+
+            // 头像从图库中随机选一个
+            const randomAvatar = avatarPool[Math.floor(Math.random() * avatarPool.length)];
+            elements.aiAvatar.textContent = randomAvatar;
         }
         
         function switchPage(pageId) {
@@ -1324,7 +1191,7 @@
                 page.id === pageId ? page.classList.add('active') : page.classList.remove('active');
             });
             if (pageId === 'focus-page') renderDoingItems();
-            if (pageId === 'stats-page') { updateStats(); renderCheckinCalendar(); }
+            if (pageId === 'stats-page') { updateStats(); renderPickerHistory(); }
         }
         
         async function handleFormSubmit(e) {
@@ -1514,54 +1381,6 @@
         function updateStats() {
             elements.totalItems.textContent = appState.items.length;
             elements.completedItems.textContent = appState.items.filter(i => i.status === '已完成！').length;
-            elements.streakDays.textContent = appState.checkinData.streak;
-        }
-
-        function handleCheckin() {
-            const todayStr = formatDate(new Date());
-            if (appState.checkinData.dates.includes(todayStr)) { alert('今天已打卡'); return; }
-            appState.checkinData.dates.push(todayStr);
-            appState.checkinData.streak++;
-            saveData();
-            updateCheckinStatus();
-            renderCheckinCalendar();
-            updateStats();
-            showSparkNotification(0, "打卡成功！");
-        }
-
-        function updateCheckinStatus() {
-            const todayStr = formatDate(new Date());
-            if (appState.checkinData.dates.includes(todayStr)) {
-                elements.checkinText.textContent = "今日打卡已完成";
-                elements.checkinBtn.disabled = true;
-                elements.checkinBtn.textContent = "已打卡";
-            }
-        }
-
-        function renderCheckinCalendar() {
-            const today = new Date();
-            const m = today.getMonth(), y = today.getFullYear();
-            const firstDay = new Date(y, m, 1).getDay();
-            const lastDate = new Date(y, m + 1, 0).getDate();
-            
-            let html = `<div class="calendar-header"><div class="calendar-title">${y}年${m+1}月</div></div><div class="calendar-grid">`;
-            const days = ['日','一','二','三','四','五','六'];
-            days.forEach(d => html += `<div class="calendar-day-header">${d}</div>`);
-            
-            for(let i=0; i<firstDay; i++) html += `<div></div>`;
-            for(let d=1; d<=lastDate; d++) {
-                const dStr = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-                let cls = 'calendar-day';
-                if(dStr === formatDate(today)) cls += ' today';
-                if(appState.checkinData.dates.includes(dStr)) cls += ' checked';
-                html += `<div class="${cls}">${d}</div>`;
-            }
-            html += `</div>`;
-            elements.checkinCalendar.innerHTML = html;
-        }
-
-        function formatDate(date) {
-            return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
         }
         
         initApp();
