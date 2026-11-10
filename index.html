@@ -318,9 +318,7 @@
             font-size: 13px;
         }
 
-        .history-item:last-child {
-            border-bottom: none;
-        }
+        .history-item:last-child { border-bottom: none; }
 
         /* 计时器 */
         .timer-display {
@@ -373,10 +371,16 @@
             margin-right: 10px;
             border: 2px solid white;
             background: rgba(255,255,255,0.2);
+            overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+        }
+
+        .ai-avatar-mini-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .ai-text {
@@ -586,14 +590,16 @@
             <div class="ai-motivation" id="ai-motivation">
                 <div class="ai-content">
                     <div class="ai-header">
-                        <div class="ai-avatar-mini-card" id="ai-avatar">🐹</div>
+                        <div class="ai-avatar-mini-card" id="ai-avatar">
+                            <i class="fas fa-paw" style="color: white; opacity: 0.8;"></i>
+                        </div>
                         <h3>奶茶鼠助手</h3>
                     </div>
                     <div class="ai-text" id="ai-text">
                         欢迎使用Spark Journal！
                     </div>
                     <div class="ai-hint">
-                        <i class="fas fa-sync-alt"></i> 点击刷新激励语与随机头像
+                        <i class="fas fa-sync-alt"></i> 点击刷新激励语与卡牌头像
                     </div>
                 </div>
             </div>
@@ -713,7 +719,7 @@
                     </div>
                 </div>
 
-                <!-- 摇号历史记录面板 (从第一页搬到这里) -->
+                <!-- 摇号历史记录面板 -->
                 <div class="section">
                     <h2 class="section-title">
                         <i class="fas fa-history"></i> 摇号历史记录
@@ -819,7 +825,7 @@
                     <select class="form-select" id="item-status" required>
                         <option value="">请选择状态</option>
                         <option value="想试">想试</option>
-                        <option value="在搞">在搞</option>
+                        <option value="在搞">In progress (在搞)</option>
                         <option value="已完成！">已完成！</option>
                         <option value="已弃坑">已弃坑</option>
                     </select>
@@ -883,8 +889,11 @@
             driver: [localforage.INDEXEDDB, localforage.WEBSQL, localforage.LOCALSTORAGE]
         });
 
-        // 随机头像图库列表
-        const avatarPool = ["🐹", "🥤", "✨", "🔥", "🐱", "☕", "🍀", "🎨", "🚀", "💡"];
+        // 从 GitHub 仓库的卡牌图库目录中随机选择头像图片 (card1.jpg 到 card17.jpg)
+        function getRandomCardAvatarUrl() {
+            const randomNum = Math.floor(Math.random() * 17) + 1;
+            return `images/cards/series1/card${randomNum}.jpg`;
+        }
 
         const milkTeaMotivations = {
             welcome: [
@@ -1078,7 +1087,6 @@
             const { scenes, energies, time } = appState.selectorFilters;
             
             const candidates = appState.items.filter(item => {
-                // 核心限制：状态必须是“在搞”
                 if (item.status !== '在搞') return false;
                 
                 if (time !== 'All' && time !== '全部' && item.timeCost && item.timeCost !== time) {
@@ -1111,7 +1119,7 @@
             let weightedPool = [];
             candidates.forEach(item => {
                 const priority = parseInt(item.priority !== undefined ? item.priority : 3);
-                const weight = priority + 1; // 0->1, 1->2, 2->3, 3->4
+                const weight = priority + 1;
                 for (let i = 0; i < weight; i++) {
                     weightedPool.push(item);
                 }
@@ -1181,9 +1189,9 @@
             const pool = doingItems.length === 0 ? milkTeaMotivations.empty : milkTeaMotivations.welcome;
             elements.aiText.textContent = pool[Math.floor(Math.random() * pool.length)];
 
-            // 头像从图库中随机选一个
-            const randomAvatar = avatarPool[Math.floor(Math.random() * avatarPool.length)];
-            elements.aiAvatar.textContent = randomAvatar;
+            // 从图库随机选一张卡牌图片作为头像
+            const cardUrl = getRandomCardAvatarUrl();
+            elements.aiAvatar.innerHTML = `<img src="${cardUrl}" alt="Avatar" onerror="this.parentElement.innerHTML='🐹';">`;
         }
         
         function switchPage(pageId) {
@@ -1319,15 +1327,6 @@
             elements.sparkCount.textContent = appState.sparks.toFixed(1);
         }
         
-        function showSparkNotification(amount, reason) {
-            const notif = document.createElement('div');
-            notif.className = 'notification';
-            if (amount < 0) notif.style.backgroundColor = 'var(--danger)';
-            notif.innerHTML = `<i class="fas fa-fire"></i><div><div>${amount>=0?'+':''}${amount.toFixed(1)} 火花</div><div style="font-size: 12px;">${reason}</div></div>`;
-            document.body.appendChild(notif);
-            setTimeout(() => notif.remove(), 3000);
-        }
-        
         function startTimer() {
             if (appState.timer.isRunning) return;
             appState.timer.isRunning = true;
@@ -1374,7 +1373,6 @@
             appState.sparks += 0.1;
             updateSparkDisplay();
             await saveData();
-            showSparkNotification(0.1, "专注奖励");
             resetTimer();
         }
         
