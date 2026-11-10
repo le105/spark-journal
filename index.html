@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Spark Journal - 个人媒体记录与时间选择器</title>
+    <title>Spark Journal - 像素掌机版</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/localforage@1.10.0/dist/localforage.min.js"></script>
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -11,19 +11,17 @@
     <meta name="apple-mobile-web-app-title" content="Spark Journal">
     <style>
         :root {
-            --primary-color: #6c5ce7;
-            --primary-light: #a29bfe;
-            --secondary-color: #fd79a8;
-            --background: #f5f6fa;
-            --surface: #ffffff;
-            --text-primary: #2d3436;
-            --text-secondary: #636e72;
-            --success: #00b894;
-            --warning: #fdcb6e;
-            --danger: #e17055;
-            --border-radius: 12px;
-            --shadow: 0 2px 10px rgba(0,0,0,0.08);
-            --transition: all 0.3s ease;
+            --pixel-bg: #f4f1ea;
+            --pixel-surface: #ffffff;
+            --pixel-border: #2d3436;
+            --pixel-primary: #6c5ce7;
+            --pixel-accent: #00b894;
+            --pixel-warning: #fdcb6e;
+            --pixel-danger: #e17055;
+            --pixel-text: #2d3436;
+            --pixel-muted: #636e72;
+            --pixel-shadow: 3px 3px 0px #2d3436;
+            --pixel-shadow-sm: 2px 2px 0px #2d3436;
         }
 
         * {
@@ -31,12 +29,12 @@
             padding: 0;
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
+            font-family: "Courier New", Courier, monospace, -apple-system, sans-serif; /* 强化复古打字机/像素感字体 */
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background-color: var(--background);
-            color: var(--text-primary);
+            background-color: var(--pixel-bg);
+            color: var(--pixel-text);
             line-height: 1.5;
             padding: 0;
             margin: 0;
@@ -48,40 +46,43 @@
             min-height: 100vh;
             padding: 0;
             margin: 0 auto;
-            background-color: var(--background);
+            background-color: var(--pixel-bg);
         }
 
-        /* 顶部导航 */
+        /* 顶部导航：掌机像素框 */
         .app-header {
             position: sticky;
             top: 0;
             z-index: 100;
-            background-color: var(--surface);
-            padding: 15px;
-            box-shadow: var(--shadow);
+            background-color: var(--pixel-surface);
+            padding: 12px 15px;
+            border-bottom: 3px solid var(--pixel-border);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
         .app-title {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--primary-color);
+            font-size: 18px;
+            font-weight: 900;
+            color: var(--pixel-primary);
+            letter-spacing: 1px;
         }
 
         .spark-display {
             display: flex;
             align-items: center;
-            background-color: var(--primary-light);
-            padding: 8px 15px;
-            border-radius: 20px;
-            color: white;
-            font-weight: 600;
+            background-color: var(--pixel-warning);
+            border: 2px solid var(--pixel-border);
+            padding: 4px 10px;
+            box-shadow: var(--pixel-shadow-sm);
+            color: var(--pixel-text);
+            font-weight: bold;
+            font-size: 14px;
         }
 
         .spark-icon {
-            margin-right: 5px;
+            margin-right: 4px;
         }
 
         /* 底部导航 (4个页签) */
@@ -90,12 +91,12 @@
             bottom: 0;
             left: 0;
             right: 0;
-            background-color: var(--surface);
+            background-color: var(--pixel-surface);
             display: flex;
-            padding: 10px 0;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            padding: 8px 0;
+            border-top: 3px solid var(--pixel-border);
             z-index: 100;
-            padding-bottom: calc(10px + env(safe-area-inset-bottom));
+            padding-bottom: calc(8px + env(safe-area-inset-bottom));
         }
 
         .nav-item {
@@ -104,20 +105,21 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 5px 0;
-            color: var(--text-secondary);
+            padding: 4px 0;
+            color: var(--pixel-muted);
             text-decoration: none;
-            font-size: 12px;
-            transition: var(--transition);
+            font-size: 11px;
+            font-weight: bold;
+            transition: none;
         }
 
         .nav-item.active {
-            color: var(--primary-color);
+            color: var(--pixel-primary);
         }
 
         .nav-icon {
-            font-size: 20px;
-            margin-bottom: 3px;
+            font-size: 18px;
+            margin-bottom: 2px;
         }
 
         /* 主内容区域 */
@@ -134,69 +136,74 @@
             display: block;
         }
 
+        /* 像素卡片风格 */
         .section {
-            background-color: var(--surface);
-            border-radius: var(--border-radius);
-            padding: 20px;
+            background-color: var(--pixel-surface);
+            border: 3px solid var(--pixel-border);
+            border-radius: 0;
+            padding: 15px;
             margin-bottom: 15px;
-            box-shadow: var(--shadow);
+            box-shadow: var(--pixel-shadow);
         }
 
         .section-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 15px;
+            font-size: 16px;
+            font-weight: 900;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
+            border-bottom: 2px dashed #dfe4ea;
+            padding-bottom: 8px;
         }
 
         .section-title i {
             margin-right: 8px;
-            color: var(--primary-color);
+            color: var(--pixel-primary);
         }
 
-        /* 按钮样式 */
+        /* 像素硬朗按钮 */
         .btn {
             display: block;
             width: 100%;
-            padding: 15px;
-            border: none;
-            border-radius: var(--border-radius);
-            font-size: 16px;
-            font-weight: 600;
+            padding: 12px;
+            border: 3px solid var(--pixel-border);
+            border-radius: 0;
+            font-size: 15px;
+            font-weight: 900;
             cursor: pointer;
-            transition: var(--transition);
             text-align: center;
+            box-shadow: var(--pixel-shadow);
+            transition: transform 0.1s ease, box-shadow 0.1s ease;
         }
 
         .btn:active {
-            transform: scale(0.97);
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0px var(--pixel-border);
         }
 
-        .btn-primary { background-color: var(--primary-color); color: white; }
-        .btn-success { background-color: var(--success); color: white; }
-        .btn-warning { background-color: var(--warning); color: white; }
-        .btn-danger { background-color: var(--danger); color: white; }
+        .btn-primary { background-color: var(--pixel-primary); color: white; }
+        .btn-success { background-color: var(--pixel-accent); color: white; }
+        .btn-warning { background-color: var(--pixel-warning); color: var(--pixel-text); }
+        .btn-danger { background-color: var(--pixel-danger); color: white; }
 
         /* 双列作品卡片布局 */
         #items-container {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
+            gap: 10px;
             margin-bottom: 10px;
         }
 
         .item-card {
-            background-color: var(--surface);
-            border-radius: var(--border-radius);
-            padding: 12px;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
+            background-color: var(--pixel-surface);
+            border: 2px solid var(--pixel-border);
+            border-radius: 0;
+            padding: 10px;
+            box-shadow: var(--pixel-shadow-sm);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            min-height: 120px;
-            border: 1px solid rgba(0,0,0,0.04);
+            min-height: 110px;
         }
 
         .item-header {
@@ -208,8 +215,8 @@
         }
 
         .item-title {
-            font-size: 14px;
-            font-weight: 600;
+            font-size: 13px;
+            font-weight: 900;
             line-height: 1.3;
             display: -webkit-box;
             -webkit-line-clamp: 2;
@@ -222,31 +229,30 @@
             display: flex;
             flex-wrap: wrap;
             gap: 4px;
-            font-size: 10px;
+            font-size: 9px;
             margin-top: 4px;
         }
 
         .item-tag {
-            padding: 2px 6px;
-            border-radius: 8px;
-            font-size: 10px;
-            font-weight: 500;
+            padding: 2px 4px;
+            border: 1px solid var(--pixel-border);
+            font-size: 9px;
+            font-weight: bold;
             white-space: nowrap;
         }
 
-        .tag-status { background-color: var(--warning); color: white; }
-        .tag-type { background-color: var(--primary-light); color: white; }
-        .tag-done { background-color: var(--success); color: white; }
-        .tag-dropped { background-color: var(--danger); color: white; }
-        .tag-priority { background-color: #74b9ff; color: white; }
+        .tag-status { background-color: var(--pixel-warning); color: var(--pixel-text); }
+        .tag-type { background-color: var(--pixel-primary); color: white; }
+        .tag-done { background-color: var(--pixel-accent); color: white; }
+        .tag-dropped { background-color: var(--pixel-danger); color: white; }
+        .tag-priority { background-color: #0984e3; color: white; }
         .tag-context { background-color: #a29bfe; color: white; }
 
         .item-comment {
-            margin-top: 6px;
+            margin-top: 4px;
             font-style: italic;
-            color: var(--text-secondary);
-            font-size: 12px;
-            line-height: 1.3;
+            color: var(--pixel-muted);
+            font-size: 11px;
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
@@ -259,118 +265,117 @@
             margin-bottom: 10px;
         }
         #doing-items-container .item-title {
-            font-size: 16px;
+            font-size: 15px;
             -webkit-line-clamp: unset;
         }
 
-        /* 选择器页签样式 */
+        /* 像素标签筛选组 */
         .selector-filter-group {
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
 
         .filter-label {
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: var(--text-primary);
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 6px;
+            color: var(--pixel-text);
             display: block;
         }
 
         .filter-chips {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 6px;
         }
 
         .filter-chip {
-            padding: 6px 12px;
-            background: #f1f2f6;
-            border: 1px solid #dfe4ea;
-            border-radius: 20px;
-            font-size: 13px;
-            color: var(--text-secondary);
+            padding: 5px 10px;
+            background: #ffffff;
+            border: 2px solid var(--pixel-border);
+            border-radius: 0;
+            font-size: 12px;
+            font-weight: bold;
+            color: var(--pixel-muted);
             cursor: pointer;
-            transition: var(--transition);
+            box-shadow: 2px 2px 0px #2d3436;
         }
 
         .filter-chip.active {
-            background: var(--primary-light);
+            background: var(--pixel-primary);
             color: white;
-            border-color: var(--primary-color);
+            box-shadow: inset 2px 2px 0px rgba(0,0,0,0.3);
         }
 
         .picker-result-box {
-            background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+            background: var(--pixel-primary);
             color: white;
-            border-radius: var(--border-radius);
-            padding: 20px;
+            border: 3px solid var(--pixel-border);
+            border-radius: 0;
+            padding: 15px;
             text-align: center;
             margin-top: 15px;
-            box-shadow: var(--shadow);
+            box-shadow: var(--pixel-shadow);
         }
 
         .history-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid rgba(0,0,0,0.06);
-            font-size: 13px;
+            padding: 8px 0;
+            border-bottom: 1px dotted var(--pixel-border);
+            font-size: 12px;
         }
-
         .history-item:last-child { border-bottom: none; }
 
         /* 计时器 */
         .timer-display {
-            font-size: 48px;
-            font-weight: 700;
+            font-size: 42px;
+            font-weight: 900;
             text-align: center;
-            margin: 20px 0;
-            color: var(--primary-color);
-            font-variant-numeric: tabular-nums;
+            margin: 15px 0;
+            color: var(--pixel-primary);
+            letter-spacing: 2px;
         }
 
         .timer-controls {
             display: flex;
-            gap: 10px;
+            gap: 8px;
         }
 
         .timer-btn {
             flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: var(--border-radius);
-            font-size: 16px;
-            font-weight: 600;
+            padding: 10px;
+            border: 2px solid var(--pixel-border);
+            border-radius: 0;
+            font-size: 14px;
+            font-weight: bold;
             cursor: pointer;
+            box-shadow: var(--pixel-shadow-sm);
         }
 
-        /* AI激励卡片 */
+        /* 像素AI激励卡片 */
         .ai-motivation {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            border-radius: var(--border-radius);
-            padding: 20px;
+            background: #ffeaa7;
+            border: 3px solid var(--pixel-border);
+            border-radius: 0;
+            padding: 15px;
             margin-bottom: 15px;
-            box-shadow: var(--shadow);
-            position: relative;
-            overflow: hidden;
+            box-shadow: var(--pixel-shadow);
             cursor: pointer;
         }
 
         .ai-header {
             display: flex;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .ai-avatar-mini-card {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            border: 2px solid var(--pixel-border);
             margin-right: 10px;
-            border: 2px solid white;
-            background: rgba(255,255,255,0.2);
+            background: white;
             overflow: hidden;
             display: flex;
             align-items: center;
@@ -384,15 +389,17 @@
         }
 
         .ai-text {
-            font-size: 16px;
+            font-size: 14px;
+            font-weight: bold;
             line-height: 1.4;
         }
 
         .ai-hint {
-            font-size: 12px;
+            font-size: 11px;
             opacity: 0.8;
-            margin-top: 10px;
+            margin-top: 8px;
             text-align: center;
+            font-weight: bold;
         }
 
         /* 统计卡片 */
@@ -404,22 +411,25 @@
         }
 
         .stat-card {
-            background-color: var(--primary-light);
-            border-radius: var(--border-radius);
-            padding: 15px;
+            background-color: var(--pixel-surface);
+            border: 2px solid var(--pixel-border);
+            border-radius: 0;
+            padding: 12px;
             text-align: center;
-            color: white;
+            box-shadow: var(--pixel-shadow-sm);
         }
 
         .stat-value {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 5px;
+            font-size: 22px;
+            font-weight: 900;
+            color: var(--pixel-primary);
+            margin-bottom: 3px;
         }
 
         .stat-label {
-            font-size: 12px;
-            opacity: 0.9;
+            font-size: 11px;
+            font-weight: bold;
+            color: var(--pixel-muted);
         }
 
         /* 奖励兑换列表 */
@@ -427,59 +437,56 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 0;
-            border-bottom: 1px solid rgba(0,0,0,0.08);
+            padding: 12px 0;
+            border-bottom: 2px dotted #dfe4ea;
             gap: 10px;
         }
-
         .reward-item:last-child { border-bottom: none; }
 
-        .reward-info h4 { font-size: 15px; margin-bottom: 3px; font-weight: 600; }
-        .reward-info p { font-size: 12px; color: var(--text-secondary); }
+        .reward-info h4 { font-size: 14px; font-weight: bold; margin-bottom: 2px; }
+        .reward-info p { font-size: 11px; color: var(--pixel-muted); }
 
         .reward-action-group {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             flex-shrink: 0;
         }
 
         .reward-cost {
-            padding: 4px 8px;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 600;
+            padding: 3px 6px;
+            border: 1px solid var(--pixel-border);
+            font-size: 11px;
+            font-weight: bold;
             color: white;
-            white-space: nowrap;
         }
-
-        .reward-cost.plus { background-color: var(--success); }
-        .reward-cost.minus { background-color: var(--danger); }
+        .reward-cost.plus { background-color: var(--pixel-accent); }
+        .reward-cost.minus { background-color: var(--pixel-danger); }
 
         .flex-btn-group {
             display: flex;
-            gap: 8px;
-            margin-top: 8px;
+            gap: 6px;
+            margin-top: 6px;
             width: 100%;
         }
         .flex-btn-group .btn {
             flex: 1;
-            padding: 10px 12px;
-            font-size: 14px;
-            border-radius: 8px;
+            padding: 8px;
+            font-size: 13px;
         }
 
         /* 空状态 */
         .empty-state {
             text-align: center;
-            padding: 40px 20px;
-            color: var(--text-secondary);
+            padding: 30px 15px;
+            color: var(--pixel-muted);
             grid-column: span 2;
+            font-weight: bold;
         }
 
         .empty-state i {
-            font-size: 50px;
-            margin-bottom: 15px;
+            font-size: 40px;
+            margin-bottom: 10px;
             opacity: 0.5;
         }
 
@@ -488,20 +495,21 @@
             display: none;
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background-color: rgba(0,0,0,0.5);
+            background-color: rgba(0,0,0,0.6);
             z-index: 1000;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            padding: 15px;
         }
 
         .modal-content {
-            background-color: var(--surface);
+            background-color: var(--pixel-surface);
+            border: 3px solid var(--pixel-border);
+            border-radius: 0;
             width: 100%;
             max-width: 500px;
-            border-radius: var(--border-radius);
             padding: 20px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            box-shadow: 6px 6px 0px #2d3436;
             max-height: 90vh;
             overflow-y: auto;
         }
@@ -510,47 +518,51 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--pixel-border);
+            padding-bottom: 8px;
         }
 
-        .modal-title { font-size: 18px; font-weight: 600; }
-        .close-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text-primary); }
+        .modal-title { font-size: 16px; font-weight: 900; }
+        .close-btn { background: none; border: none; font-size: 22px; font-weight: bold; cursor: pointer; color: var(--pixel-text); }
 
-        .form-group { margin-bottom: 15px; }
-        .form-label { display: block; margin-bottom: 5px; font-weight: 500; }
+        .form-group { margin-bottom: 12px; }
+        .form-label { display: block; margin-bottom: 4px; font-weight: bold; font-size: 13px; }
         .form-input, .form-select, .form-textarea {
             width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
-            background-color: var(--surface);
-            -webkit-appearance: none;
+            padding: 10px;
+            border: 2px solid var(--pixel-border);
+            border-radius: 0;
+            font-size: 14px;
+            background-color: #fff;
+            box-shadow: 2px 2px 0px rgba(0,0,0,0.1);
         }
-        .form-textarea { height: 90px; resize: vertical; }
+        .form-textarea { height: 80px; resize: vertical; }
 
         .checkbox-group {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 5px;
+            gap: 8px;
+            margin-top: 4px;
         }
-        .checkbox-label { display: flex; align-items: center; gap: 5px; font-size: 14px; cursor: pointer; }
+        .checkbox-label { display: flex; align-items: center; gap: 4px; font-size: 13px; font-weight: bold; cursor: pointer; }
 
         .notification {
             position: fixed;
-            top: 20px; right: 20px;
-            background-color: var(--success);
+            top: 15px; right: 15px;
+            background-color: var(--pixel-accent);
+            border: 2px solid var(--pixel-border);
             color: white;
-            padding: 12px 16px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            padding: 10px 14px;
+            box-shadow: var(--pixel-shadow-sm);
             z-index: 1001;
             display: flex;
             align-items: center;
-            animation: slideInRight 0.5s, fadeOut 0.5s 2.5s forwards;
+            font-weight: bold;
+            font-size: 13px;
+            animation: slideInRight 0.3s, fadeOut 0.3s 2.2s forwards;
         }
-        .notification i { margin-right: 8px; }
+        .notification i { margin-right: 6px; }
 
         @keyframes slideInRight {
             from { transform: translateX(100%); opacity: 0; }
@@ -563,12 +575,15 @@
 
         .storage-status {
             position: fixed;
-            bottom: 70px; left: 0; right: 0;
-            background: var(--warning);
-            color: white;
-            padding: 8px;
+            bottom: 65px; left: 0; right: 0;
+            background: var(--pixel-warning);
+            border-top: 2px solid var(--pixel-border);
+            border-bottom: 2px solid var(--pixel-border);
+            color: var(--pixel-text);
+            padding: 6px;
             text-align: center;
-            font-size: 13px;
+            font-size: 12px;
+            font-weight: bold;
             z-index: 99;
             display: none;
         }
@@ -579,7 +594,7 @@
         <div class="storage-status" id="storage-status"></div>
         
         <header class="app-header">
-            <div class="app-title">Spark Journal</div>
+            <div class="app-title">SPARK_JOURNAL.EXE</div>
             <div class="spark-display">
                 <span class="spark-icon">🔥</span>
                 <span id="spark-count">0.0</span>
@@ -591,15 +606,15 @@
                 <div class="ai-content">
                     <div class="ai-header">
                         <div class="ai-avatar-mini-card" id="ai-avatar">
-                            <i class="fas fa-paw" style="color: white; opacity: 0.8;"></i>
+                            <i class="fas fa-paw" style="color: var(--pixel-border);"></i>
                         </div>
-                        <h3>奶茶鼠助手</h3>
+                        <h3 style="font-size: 14px; font-weight: 900;">奶茶鼠助手_v1.0</h3>
                     </div>
                     <div class="ai-text" id="ai-text">
-                        欢迎使用Spark Journal！
+                        系统加载成功！准备好开始今日的像素冒险了吗？
                     </div>
                     <div class="ai-hint">
-                        <i class="fas fa-sync-alt"></i> 点击刷新激励语与卡牌头像
+                        [点击此处刷新随机头像与台词]
                     </div>
                 </div>
             </div>
@@ -608,10 +623,10 @@
             <div class="page active" id="selector-page">
                 <div class="section">
                     <h2 class="section-title">
-                        <i class="fas fa-magic"></i> 智能时间管理选择器
+                        <i class="fas fa-gamepad"></i> 智能时间选择器
                     </h2>
-                    <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 15px;">
-                        仅从<b>“在搞”</b>状态的作品中，按场景、精力、时间及优先级权重为你摇号推荐！
+                    <p style="font-size: 12px; color: var(--pixel-muted); margin-bottom: 12px; font-weight: bold;">
+                        [只从“在搞”状态中，按权重与标签自动摇号]
                     </p>
 
                     <div class="selector-filter-group">
@@ -633,17 +648,16 @@
                     </div>
 
                     <div class="selector-filter-group">
-                        <span class="filter-label">3. 可用时间 (单选)</span>
+                        <span class="filter-label">3. 可用时间 (可多选)</span>
                         <div class="filter-chips" id="filter-time">
-                            <div class="filter-chip active" data-val="全部">全部</div>
                             <div class="filter-chip" data-val="碎片">碎片</div>
                             <div class="filter-chip" data-val="30min">30min</div>
                             <div class="filter-chip" data-val="1h以上">1h以上</div>
                         </div>
                     </div>
 
-                    <button class="btn btn-primary" id="btn-pick-random" style="margin-top: 20px;">
-                        <i class="fas fa-dice"></i> 帮我摇一个 (加权推荐)
+                    <button class="btn btn-primary" id="btn-pick-random" style="margin-top: 15px;">
+                        <i class="fas fa-dice"></i> 摇号抽取任务
                     </button>
 
                     <div id="picker-result-container"></div>
@@ -654,16 +668,16 @@
             <div class="page" id="library-page">
                 <div class="section">
                     <button class="btn btn-primary" id="add-item-btn">
-                        <i class="fas fa-plus"></i> 添加新作品
+                        <i class="fas fa-plus"></i> 新增作品记录
                     </button>
                 </div>
                 
                 <div id="items-container"></div>
                 
                 <div class="empty-state" id="empty-library">
-                    <i class="fas fa-book-open"></i>
-                    <h3>还没有作品记录</h3>
-                    <p>点击上方按钮添加你的第一个作品</p>
+                    <i class="fas fa-box-open"></i>
+                    <h3>暂无作品记录</h3>
+                    <p>点击上方按钮录入第一条数据</p>
                 </div>
             </div>
 
@@ -671,32 +685,32 @@
             <div class="page" id="focus-page">
                 <div class="section">
                     <h2 class="section-title">
-                        <i class="fas fa-clock"></i> 专注计时器
+                        <i class="fas fa-hourglass-start"></i> 专注终端
                     </h2>
-                    <p style="text-align: center; margin-bottom: 15px; color: var(--text-secondary);">
-                        专注投入作品，每25分钟可获得0.1火花
+                    <p style="text-align: center; margin-bottom: 10px; color: var(--pixel-muted); font-size: 12px; font-weight: bold;">
+                        每25分钟专注可获取 +0.1 火花
                     </p>
                     <div class="timer-display" id="timer-display">25:00</div>
                     <div class="timer-controls">
-                        <button class="timer-btn btn-success" id="start-timer">开始</button>
+                        <button class="timer-btn btn-success" id="start-timer">启动</button>
                         <button class="timer-btn btn-warning" id="pause-timer" disabled>暂停</button>
                         <button class="timer-btn btn-danger" id="reset-timer">重置</button>
                     </div>
-                    <button class="btn btn-primary" id="claim-sparks" disabled style="margin-top: 15px;">
+                    <button class="btn btn-primary" id="claim-sparks" disabled style="margin-top: 12px;">
                         领取火花 (+0.1)
                     </button>
                 </div>
                 
                 <div class="section">
                     <h2 class="section-title">
-                        <i class="fas fa-play-circle"></i> 正在进行的作品
+                        <i class="fas fa-tasks"></i> 正在推进的项目 ("在搞")
                     </h2>
                     <div id="doing-items-container"></div>
                     
                     <div class="empty-state" id="empty-doing">
-                        <i class="fas fa-hourglass-half"></i>
-                        <h3>没有正在进行的作品</h3>
-                        <p>在作品库中将作品状态设为"在搞"后，可以在这里开始专注</p>
+                        <i class="fas fa-folder-open"></i>
+                        <h3>没有正在进行的项目</h3>
+                        <p>请在作品库中将状态设为“在搞”</p>
                     </div>
                 </div>
             </div>
@@ -705,65 +719,65 @@
             <div class="page" id="stats-page">
                 <div class="section">
                     <h2 class="section-title">
-                        <i class="fas fa-chart-bar"></i> 数据概览
+                        <i class="fas fa-chart-pie"></i> 数据统计
                     </h2>
                     <div class="stats-grid">
                         <div class="stat-card">
                             <div class="stat-value" id="total-items">0</div>
-                            <div class="stat-label">总作品数</div>
+                            <div class="stat-label">总条目</div>
                         </div>
                         <div class="stat-card">
                             <div class="stat-value" id="completed-items">0</div>
-                            <div class="stat-label">已完成</div>
+                            <div class="stat-label">已通关/完成</div>
                         </div>
                     </div>
                 </div>
 
-                <!-- 摇号历史记录面板 -->
+                <!-- 摇号历史 -->
                 <div class="section">
                     <h2 class="section-title">
-                        <i class="fas fa-history"></i> 摇号历史记录
+                        <i class="fas fa-history"></i> 摇号历史档案
                     </h2>
                     <div id="picker-history-list">
-                        <div style="text-align: center; color: var(--text-secondary); padding: 15px; font-size: 13px;">暂无摇号记录</div>
+                        <div style="text-align: center; color: var(--pixel-muted); padding: 10px; font-size: 12px;">暂无历史记录</div>
                     </div>
                 </div>
                 
                 <div class="section">
                     <h2 class="section-title">
-                        <i class="fas fa-gift"></i> 奖励与惩罚兑换
+                        <i class="fas fa-coins"></i> 奖励与惩罚终端
                     </h2>
                     <div class="rewards-list">
                         <div class="reward-item">
                             <div class="reward-info">
                                 <h4>忍住没吃</h4>
-                                <p>成功抵抗住食物诱惑</p>
+                                <p>克制饮食诱惑</p>
                             </div>
                             <div class="reward-action-group">
                                 <span class="reward-cost plus">+0.1 火花</span>
-                                <button class="btn btn-success" id="btn-earn-eat" style="padding: 6px 12px; font-size: 13px; width:auto;">获得</button>
+                                <button class="btn btn-success" id="btn-earn-eat" style="padding: 4px 8px; font-size: 12px; width:auto; box-shadow:2px 2px 0px #2d3436;">获得</button>
                             </div>
                         </div>
                         
                         <div class="reward-item">
                             <div class="reward-info">
                                 <h4>刷垃圾内容40分钟</h4>
-                                <p>惩罚/扣除无意义娱乐时间</p>
+                                <p>无意义消磨时间惩罚</p>
                             </div>
                             <div class="reward-action-group">
                                 <span class="reward-cost minus">-0.2 火花</span>
-                                <button class="btn btn-danger" id="btn-cost-trash" style="padding: 6px 12px; font-size: 13px; width:auto;">扣除</button>
+                                <button class="btn btn-danger" id="btn-cost-trash" style="padding: 4px 8px; font-size: 12px; width:auto; box-shadow:2px 2px 0px #2d3436;">扣除</button>
                             </div>
                         </div>
                         
                         <div class="reward-item" style="flex-direction: column; align-items: flex-start; gap: 4px;">
                             <div class="reward-info" style="width: 100%;">
-                                <h4>手动增减火花数量</h4>
-                                <p>自由操控火花奖励或扣罚机制</p>
+                                <h4>自定义火花调整</h4>
+                                <p>手动输入数值加减</p>
                             </div>
-                            <div style="display: flex; align-items: center; gap: 8px; width: 100%; margin-top: 4px;">
-                                <input type="number" id="custom-spark-val" min="0.1" step="0.1" value="1.0" class="form-input" style="width: 90px; padding: 8px; font-size: 14px;">
-                                <span style="font-size: 14px; color: var(--text-secondary);">火花数</span>
+                            <div style="display: flex; align-items: center; gap: 6px; width: 100%; margin-top: 2px;">
+                                <input type="number" id="custom-spark-val" min="0.1" step="0.1" value="1.0" class="form-input" style="width: 80px; padding: 6px; font-size: 13px;">
+                                <span style="font-size: 13px; font-weight: bold;">火花</span>
                             </div>
                             <div class="flex-btn-group">
                                 <button class="btn btn-success" id="btn-custom-add"><i class="fas fa-plus"></i> 增加</button>
@@ -778,7 +792,7 @@
         <!-- 底部导航 (4个页签) -->
         <nav class="bottom-nav">
             <a href="#" class="nav-item active" data-page="selector-page">
-                <i class="fas fa-magic nav-icon"></i>
+                <i class="fas fa-gamepad nav-icon"></i>
                 <span>选择器</span>
             </a>
             <a href="#" class="nav-item" data-page="library-page">
@@ -786,12 +800,12 @@
                 <span>作品库</span>
             </a>
             <a href="#" class="nav-item" data-page="focus-page">
-                <i class="fas fa-clock nav-icon"></i>
+                <i class="fas fa-hourglass-start nav-icon"></i>
                 <span>专注</span>
             </a>
             <a href="#" class="nav-item" data-page="stats-page">
-                <i class="fas fa-chart-bar nav-icon"></i>
-                <span>统计与历史</span>
+                <i class="fas fa-history nav-icon"></i>
+                <span>档案</span>
             </a>
         </nav>
     </div>
@@ -825,7 +839,7 @@
                     <select class="form-select" id="item-status" required>
                         <option value="">请选择状态</option>
                         <option value="想试">想试</option>
-                        <option value="在搞">In progress (在搞)</option>
+                        <option value="在搞">在搞</option>
                         <option value="已完成！">已完成！</option>
                         <option value="已弃坑">已弃坑</option>
                     </select>
@@ -850,12 +864,12 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label" for="item-timecost">时间开销</label>
-                    <select class="form-select" id="item-timecost">
-                        <option value="碎片">碎片 (&lt;15分钟)</option>
-                        <option value="30min">30min</option>
-                        <option value="1h以上">1h以上</option>
-                    </select>
+                    <label class="form-label">时间开销 (可多选)</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label"><input type="checkbox" name="timeCosts" value="碎片"> 碎片 (&lt;15m)</label>
+                        <label class="checkbox-label"><input type="checkbox" name="timeCosts" value="30min"> 30min</label>
+                        <label class="checkbox-label"><input type="checkbox" name="timeCosts" value="1h以上"> 1h以上</label>
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -878,7 +892,7 @@
                     <textarea class="form-textarea" id="item-comment"></textarea>
                 </div>
                 
-                <button type="submit" class="btn btn-primary">保存作品</button>
+                <button type="submit" class="btn btn-primary">保存数据</button>
             </form>
         </div>
     </div>
@@ -889,7 +903,6 @@
             driver: [localforage.INDEXEDDB, localforage.WEBSQL, localforage.LOCALSTORAGE]
         });
 
-        // 从 GitHub 仓库的卡牌图库目录中随机选择头像图片 (card1.jpg 到 card17.jpg)
         function getRandomCardAvatarUrl() {
             const randomNum = Math.floor(Math.random() * 17) + 1;
             return `images/cards/series1/card${randomNum}.jpg`;
@@ -897,13 +910,13 @@
 
         const milkTeaMotivations = {
             welcome: [
-                "欢迎来到Spark Journal！今天准备推进哪个在搞的项目呢？🥤",
-                "选择器随时准备为你摇出心仪的在搞作品~ nia！",
-                "保持节奏，让奶茶鼠陪你一起高效搞定作品吧！✨"
+                "掌机模式已激活！今天准备推进哪个在搞的项目呢？",
+                "选择器随时准备为你摇出心仪的像素级目标~",
+                "保持自律节奏，奶茶鼠陪伴中！"
             ],
             empty: [
-                "你的作品库里还没有处于'在搞'状态的作品哦，快去加一个并设为在搞吧，nia！",
-                "没有在搞的项目怎么摇？快去作品库开启新项目吧！🥤"
+                "当前没有处于'在搞'状态的目标，快去作品库加一个并设为在搞吧！",
+                "无项目可摇！请先前往作品库初始化条目。"
             ]
         };
 
@@ -915,7 +928,7 @@
             selectorFilters: {
                 scenes: [],
                 energies: [],
-                time: "全部"
+                timeCosts: []
             }
         };
         
@@ -962,7 +975,7 @@
             updateStats();
             updateAIMotivation();
             renderPickerHistory();
-            showStorageStatus("数据加载完成！");
+            showStorageStatus("系统初始化完成！");
         }
         
         async function loadData() {
@@ -1021,7 +1034,7 @@
             
             setupFilterChips('filter-scene', 'scenes', true);
             setupFilterChips('filter-energy', 'energies', true);
-            setupFilterChips('filter-time', 'time', false);
+            setupFilterChips('filter-time', 'timeCosts', true);
 
             elements.btnPickRandom.addEventListener('click', handleWeightedPick);
 
@@ -1042,7 +1055,7 @@
                 appState.sparks -= 0.2;
                 updateSparkDisplay();
                 await saveData();
-                showSparkNotification(-0.2, "刷垃圾内容扣除");
+                showSparkNotification(-0.2, "垃圾时间惩罚");
             });
             
             elements.btnCustomAdd.addEventListener('click', async () => {
@@ -1082,15 +1095,16 @@
             });
         }
 
-        // 加权轮盘推荐算法（强制限定状态为“在搞”）
         function handleWeightedPick() {
-            const { scenes, energies, time } = appState.selectorFilters;
+            const { scenes, energies, timeCosts } = appState.selectorFilters;
             
             const candidates = appState.items.filter(item => {
                 if (item.status !== '在搞') return false;
                 
-                if (time !== 'All' && time !== '全部' && item.timeCost && item.timeCost !== time) {
-                    return false;
+                if (timeCosts.length > 0) {
+                    const itemTime = item.timeCosts || (item.timeCost ? [item.timeCost] : ['碎片']);
+                    const hasTime = itemTime.some(t => timeCosts.includes(t));
+                    if (!hasTime) return false;
                 }
                 
                 if (scenes.length > 0) {
@@ -1108,9 +1122,9 @@
 
             if (candidates.length === 0) {
                 elements.pickerResultContainer.innerHTML = `
-                    <div class="picker-result-box" style="background: #e17055;">
-                        <h3>没有找到符合条件的“在搞”作品</h3>
-                        <p style="font-size: 13px; margin-top: 5px;">请确保作品状态设为“在搞”并放宽标签筛选条件！</p>
+                    <div class="picker-result-box" style="background: var(--pixel-danger);">
+                        <h3>[未检索到匹配的“在搞”项目]</h3>
+                        <p style="font-size: 11px; margin-top: 4px;">请检查状态是否为“在搞”或放宽筛选条件！</p>
                     </div>
                 `;
                 return;
@@ -1139,7 +1153,7 @@
                 filters: {
                     scenes: [...scenes],
                     energies: [...energies],
-                    time: time
+                    timeCosts: [...timeCosts]
                 }
             };
 
@@ -1150,11 +1164,11 @@
 
             elements.pickerResultContainer.innerHTML = `
                 <div class="picker-result-box">
-                    <div style="font-size: 12px; opacity: 0.9; margin-bottom: 5px;">🎉 为你摇出了最契合的“在搞”作品：</div>
-                    <h3 style="font-size: 20px; margin-bottom: 8px;">${picked.title}</h3>
-                    <div style="display: flex; justify-content: center; gap: 8px; font-size: 12px;">
-                        <span style="background: rgba(0,0,0,0.2); padding: 2px 8px; border-radius: 10px;">类型: ${picked.type}</span>
-                        <span style="background: rgba(0,0,0,0.2); padding: 2px 8px; border-radius: 10px;">优先级: P${picked.priority}</span>
+                    <div style="font-size: 11px; opacity: 0.9; margin-bottom: 4px;">[摇号命中目标]</div>
+                    <h3 style="font-size: 18px; margin-bottom: 6px; font-weight: 900;">${picked.title}</h3>
+                    <div style="display: flex; justify-content: center; gap: 6px; font-size: 11px;">
+                        <span style="background: rgba(0,0,0,0.2); padding: 2px 6px;">类型: ${picked.type}</span>
+                        <span style="background: rgba(0,0,0,0.2); padding: 2px 6px;">优先级: P${picked.priority}</span>
                     </div>
                 </div>
             `;
@@ -1162,7 +1176,7 @@
 
         function renderPickerHistory() {
             if (appState.pickerHistory.length === 0) {
-                elements.pickerHistoryList.innerHTML = `<div style="text-align: center; color: var(--text-secondary); padding: 15px; font-size: 13px;">暂无摇号记录</div>`;
+                elements.pickerHistoryList.innerHTML = `<div style="text-align: center; color: var(--pixel-muted); padding: 10px; font-size: 12px;">暂无历史记录</div>`;
                 return;
             }
 
@@ -1172,11 +1186,11 @@
                     <div class="history-item">
                         <div>
                             <strong>${h.title}</strong>
-                            <div style="font-size: 11px; color: var(--text-secondary);">条件: 场景[${h.filters.scenes.join(',') || '无'}], 精力[${h.filters.energies.join(',') || '无'}]</div>
+                            <div style="font-size: 10px; color: var(--pixel-muted);">条件: [${h.filters.scenes.join('/') || '无'}]</div>
                         </div>
-                        <div style="text-align: right; font-size: 11px; color: var(--text-secondary);">
+                        <div style="text-align: right; font-size: 10px; color: var(--pixel-muted);">
                             <div>${h.datetime}</div>
-                            <span style="color: var(--primary-color);">权重P${h.priority}</span>
+                            <span style="color: var(--pixel-primary); font-weight: bold;">P${h.priority}</span>
                         </div>
                     </div>
                 `;
@@ -1189,7 +1203,6 @@
             const pool = doingItems.length === 0 ? milkTeaMotivations.empty : milkTeaMotivations.welcome;
             elements.aiText.textContent = pool[Math.floor(Math.random() * pool.length)];
 
-            // 从图库随机选一张卡牌图片作为头像
             const cardUrl = getRandomCardAvatarUrl();
             elements.aiAvatar.innerHTML = `<img src="${cardUrl}" alt="Avatar" onerror="this.parentElement.innerHTML='🐹';">`;
         }
@@ -1207,13 +1220,13 @@
             const title = document.getElementById('item-title').value;
             const type = document.getElementById('item-type').value;
             const status = document.getElementById('item-status').value;
-            const timeCost = document.getElementById('item-timecost').value;
             const priority = document.getElementById('item-priority').value;
             const rating = document.getElementById('item-rating').value ? parseFloat(document.getElementById('item-rating').value) : null;
             const comment = document.getElementById('item-comment').value;
 
             const scenes = Array.from(document.querySelectorAll('input[name="scenes"]:checked')).map(cb => cb.value);
             const energies = Array.from(document.querySelectorAll('input[name="energies"]:checked')).map(cb => cb.value);
+            const timeCosts = Array.from(document.querySelectorAll('input[name="timeCosts"]:checked')).map(cb => cb.value);
             
             const editingId = elements.itemForm.getAttribute('data-editing');
             
@@ -1221,14 +1234,14 @@
                 const idx = appState.items.findIndex(i => i.id === editingId);
                 appState.items[idx] = {
                     ...appState.items[idx],
-                    title, type, status, timeCost, priority, rating, comment, scenes, energies,
+                    title, type, status, priority, rating, comment, scenes, energies, timeCosts,
                     updatedAt: new Date().toISOString()
                 };
                 elements.itemForm.removeAttribute('data-editing');
             } else {
                 const newItem = {
                     id: Date.now().toString(),
-                    title, type, status, timeCost, priority, rating, comment, scenes, energies,
+                    title, type, status, priority, rating, comment, scenes, energies, timeCosts,
                     createdAt: new Date().toISOString()
                 };
                 appState.items.push(newItem);
@@ -1275,6 +1288,8 @@
             if (item.status === '已完成！') statusClass = 'tag-done';
             if (item.status === '已弃坑') statusClass = 'tag-dropped';
             
+            const tCostStr = item.timeCosts ? item.timeCosts.join('/') : (item.timeCost || '碎片');
+            
             div.innerHTML = `
                 <div class="item-header">
                     <div style="flex: 1; min-width: 0;">
@@ -1283,11 +1298,11 @@
                             <span class="item-tag ${statusClass}">${item.status}</span>
                             <span class="item-tag tag-type">${item.type}</span>
                             <span class="item-tag tag-priority">P${item.priority || 3}</span>
-                            <span class="item-tag tag-context">${item.timeCost || '碎片'}</span>
+                            <span class="item-tag tag-context">${tCostStr}</span>
                         </div>
                     </div>
-                    <button class="edit-btn" style="background: none; border: none; color: var(--primary-color); font-size: 14px; padding: 2px 0 2px 6px;">
-                        <i class="fas fa-edit"></i>
+                    <button class="edit-btn" style="background: none; border: none; color: var(--pixel-primary); font-size: 13px; font-weight: bold; padding: 2px 0 2px 4px;">
+                        [编辑]
                     </button>
                 </div>
                 <div>
@@ -1307,7 +1322,6 @@
             document.getElementById('item-title').value = item.title;
             document.getElementById('item-type').value = item.type;
             document.getElementById('item-status').value = item.status;
-            document.getElementById('item-timecost').value = item.timeCost || '碎片';
             document.getElementById('item-priority').value = item.priority || '3';
             document.getElementById('item-rating').value = item.rating || '';
             document.getElementById('item-comment').value = item.comment || '';
@@ -1318,6 +1332,10 @@
             document.querySelectorAll('input[name="energies"]').forEach(cb => {
                 cb.checked = item.energies && item.energies.includes(cb.value);
             });
+            document.querySelectorAll('input[name="timeCosts"]').forEach(cb => {
+                const tArr = item.timeCosts || (item.timeCost ? [item.timeCost] : []);
+                cb.checked = tArr.includes(cb.value);
+            });
 
             elements.itemForm.setAttribute('data-editing', id);
             elements.addItemModal.style.display = 'flex';
@@ -1325,6 +1343,15 @@
         
         function updateSparkDisplay() {
             elements.sparkCount.textContent = appState.sparks.toFixed(1);
+        }
+        
+        function showSparkNotification(amount, reason) {
+            const notif = document.createElement('div');
+            notif.className = 'notification';
+            if (amount < 0) notif.style.backgroundColor = 'var(--pixel-danger)';
+            notif.innerHTML = `<i class="fas fa-fire"></i><div><div>${amount>=0?'+':''}${amount.toFixed(1)} 火花</div><div style="font-size: 10px;">${reason}</div></div>`;
+            document.body.appendChild(notif);
+            setTimeout(() => notif.remove(), 2500);
         }
         
         function startTimer() {
@@ -1373,6 +1400,7 @@
             appState.sparks += 0.1;
             updateSparkDisplay();
             await saveData();
+            showSparkNotification(0.1, "专注成功奖励");
             resetTimer();
         }
         
