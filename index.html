@@ -241,10 +241,12 @@
             white-space: nowrap;
         }
 
-        .tag-status { background-color: var(--pixel-warning); color: var(--pixel-text); }
+        /* 状态标签颜色区分 */
+        .tag-doing { background-color: var(--pixel-warning); color: var(--pixel-text); } /* 在搞：像素黄 */
+        .tag-want { background-color: #55efc4; color: var(--pixel-text); } /* 想试：薄荷绿 */
         .tag-type { background-color: var(--pixel-primary); color: white; }
-        .tag-done { background-color: var(--pixel-accent); color: white; }
-        .tag-dropped { background-color: var(--pixel-danger); color: white; }
+        .tag-done { background-color: var(--pixel-accent); color: white; } /* 已完成：深绿 */
+        .tag-dropped { background-color: var(--pixel-danger); color: white; } /* 已弃坑：红 */
         .tag-priority { background-color: #0984e3; color: white; }
         .tag-context { background-color: #a29bfe; color: white; }
 
@@ -626,7 +628,7 @@
                         <i class="fas fa-gamepad"></i> 智能时间选择器
                     </h2>
                     <p style="font-size: 12px; color: var(--pixel-muted); margin-bottom: 12px; font-weight: bold;">
-                        [只从“在搞”状态中，按权重与标签自动摇号]
+                        [只从“在搞”状态中，按权重、标签与防重复冷却摇号]
                     </p>
 
                     <div class="selector-filter-group">
@@ -925,6 +927,7 @@
             sparks: 0.0,
             timer: { isRunning: false, timeLeft: 25 * 60, interval: null },
             pickerHistory: [],
+            cooldownMap: {},
             selectorFilters: {
                 scenes: [],
                 energies: [],
@@ -983,10 +986,12 @@
                 const items = await storage.getItem('items');
                 const sparks = await storage.getItem('sparks');
                 const pickerHistory = await storage.getItem('pickerHistory');
+                const cooldownMap = await storage.getItem('cooldownMap');
                 
                 if (items) appState.items = items;
                 if (sparks) appState.sparks = parseFloat(sparks);
                 if (pickerHistory) appState.pickerHistory = pickerHistory;
+                if (cooldownMap) appState.cooldownMap = cooldownMap;
             } catch (error) {
                 console.error("加载数据失败:", error);
             }
@@ -997,6 +1002,7 @@
                 await storage.setItem('items', appState.items);
                 await storage.setItem('sparks', appState.sparks.toString());
                 await storage.setItem('pickerHistory', appState.pickerHistory);
+                await storage.setItem('cooldownMap', appState.cooldownMap);
                 return true;
             } catch (error) {
                 showStorageStatus("保存数据失败");
@@ -1097,8 +1103,10 @@
 
         function handleWeightedPick() {
             const { scenes, energies, timeCosts } = appState.selectorFilters;
-            
-            const candidates = appState.items.filter(item => {
+            const now = Date.now();
+            const COOLDOWN_DURATION = 3 * 60 * 60 * 1000;
+
+            let candidates = appState.items.filter(item => {
                 if (item.status !== '在搞') return false;
                 
                 if (timeCosts.length > 0) {
@@ -1130,8 +1138,15 @@
                 return;
             }
 
+            let nonCoolingCandidates = candidates.filter(item => {
+                const lastPickedTime = appState.cooldownMap[item.id] || 0;
+                return (now - lastPickedTime) > COOLDOWN_DURATION;
+            });
+
+            const finalPool = nonCoolingCandidates.length > 0 ? nonCoolingCandidates : candidates;
+
             let weightedPool = [];
-            candidates.forEach(item => {
+            finalPool.forEach(item => {
                 const priority = parseInt(item.priority !== undefined ? item.priority : 3);
                 const weight = priority + 1;
                 for (let i = 0; i < weight; i++) {
@@ -1140,9 +1155,9 @@
             });
 
             const picked = weightedPool[Math.floor(Math.random() * weightedPool.length)];
+            appState.cooldownMap[picked.id] = now;
 
-            const now = new Date();
-            const timeStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+            const timeStr = `${new Date().getFullYear()}-${String(new Date().getMonth()+1).padStart(2,'0')}-${String(new Date().getDate()).padStart(2,'0')} ${String(new Date().getHours()).padStart(2,'0')}:${String(new Date().getMinutes()).padStart(2,'0')}`;
             
             const historyEntry = {
                 id: Date.now(),
@@ -1164,7 +1179,7 @@
 
             elements.pickerResultContainer.innerHTML = `
                 <div class="picker-result-box">
-                    <div style="font-size: 11px; opacity: 0.9; margin-bottom: 4px;">[摇号命中目标]</div>
+                    <div style="font-size: 11px; opacity: 0.9; margin-bottom: 4px;">[摇号命中目标 · 已进入3小时冷却]</div>
                     <h3 style="font-size: 18px; margin-bottom: 6px; font-weight: 900;">${picked.title}</h3>
                     <div style="display: flex; justify-content: center; gap: 6px; font-size: 11px;">
                         <span style="background: rgba(0,0,0,0.2); padding: 2px 6px;">类型: ${picked.type}</span>
@@ -1229,15 +1244,12 @@
             const timeCosts = Array.from(document.querySelectorAll('input[name="timeCosts"]:checked')).map(cb => cb.value);
             
             const editingId = elements.itemForm.getAttribute('data-editing');
-            
-            // 用时间戳作为最新改动的排序依据
             const nowTime = Date.now();
 
             if (editingId) {
                 const idx = appState.items.findIndex(i => i.id === editingId);
                 const oldItem = appState.items[idx];
                 
-                // 判断：如果从非已完成状态变为了“已完成！”，火花自动 +1.0
                 if (oldItem.status !== '已完成！' && newStatus === '已完成！') {
                     appState.sparks += 1.0;
                     updateSparkDisplay();
@@ -1266,7 +1278,7 @@
             elements.addItemModal.style.display = 'none';
         }
         
-        // 作品库排序逻辑：按照状态优先级（在搞 > 想试 > 已完成 > 已弃坑），内部按更新时间倒序
+        // 排序规则：状态排序(在搞 > 想试 > 已完成 > 已弃坑)，同状态内按优先级高到低(P3>P2>P1>P0)，同优先级按时间最新
         function getSortedItems() {
             const statusOrder = { "在搞": 1, "想试": 2, "已完成！": 3, "已弃坑": 4 };
             return [...appState.items].sort((a, b) => {
@@ -1275,7 +1287,13 @@
                 if (orderA !== orderB) {
                     return orderA - orderB;
                 }
-                // 同状态下，最新改动的排在最前面 (updatedAt 降序)
+                // 同状态下，按优先级高到低排序 (priority 数字大的在前)
+                const pA = parseInt(a.priority !== undefined ? a.priority : 3);
+                const pB = parseInt(b.priority !== undefined ? b.priority : 3);
+                if (pA !== pB) {
+                    return pB - pA;
+                }
+                // 同优先级下，最新修改的排在最前面
                 const timeA = a.updatedAt || a.createdAt || 0;
                 const timeB = b.updatedAt || b.createdAt || 0;
                 return timeB - timeA;
@@ -1314,9 +1332,10 @@
             const div = document.createElement('div');
             div.className = 'item-card';
             
-            let statusClass = 'tag-status';
-            if (item.status === '已完成！') statusClass = 'tag-done';
-            if (item.status === '已弃坑') statusClass = 'tag-dropped';
+            let statusClass = 'tag-doing';
+            if (item.status === '想试') statusClass = 'tag-want';
+            else if (item.status === '已完成！') statusClass = 'tag-done';
+            else if (item.status === '已弃坑') statusClass = 'tag-dropped';
             
             const tCostStr = item.timeCosts ? item.timeCosts.join('/') : (item.timeCost || '碎片');
             
