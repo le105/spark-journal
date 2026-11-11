@@ -29,7 +29,7 @@
             padding: 0;
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
-            font-family: "Courier New", Courier, monospace, -apple-system, sans-serif; /* 强化复古打字机/像素感字体 */
+            font-family: "Courier New", Courier, monospace, -apple-system, sans-serif;
         }
 
         body {
@@ -1219,7 +1219,7 @@
             e.preventDefault();
             const title = document.getElementById('item-title').value;
             const type = document.getElementById('item-type').value;
-            const status = document.getElementById('item-status').value;
+            const newStatus = document.getElementById('item-status').value;
             const priority = document.getElementById('item-priority').value;
             const rating = document.getElementById('item-rating').value ? parseFloat(document.getElementById('item-rating').value) : null;
             const comment = document.getElementById('item-comment').value;
@@ -1230,19 +1230,32 @@
             
             const editingId = elements.itemForm.getAttribute('data-editing');
             
+            // 用时间戳作为最新改动的排序依据
+            const nowTime = Date.now();
+
             if (editingId) {
                 const idx = appState.items.findIndex(i => i.id === editingId);
+                const oldItem = appState.items[idx];
+                
+                // 判断：如果从非已完成状态变为了“已完成！”，火花自动 +1.0
+                if (oldItem.status !== '已完成！' && newStatus === '已完成！') {
+                    appState.sparks += 1.0;
+                    updateSparkDisplay();
+                    showSparkNotification(1.0, `完成作品《${title}》奖励`);
+                }
+
                 appState.items[idx] = {
-                    ...appState.items[idx],
-                    title, type, status, priority, rating, comment, scenes, energies, timeCosts,
-                    updatedAt: new Date().toISOString()
+                    ...oldItem,
+                    title, type, status: newStatus, priority, rating, comment, scenes, energies, timeCosts,
+                    updatedAt: nowTime
                 };
                 elements.itemForm.removeAttribute('data-editing');
             } else {
                 const newItem = {
-                    id: Date.now().toString(),
-                    title, type, status, priority, rating, comment, scenes, energies, timeCosts,
-                    createdAt: new Date().toISOString()
+                    id: nowTime.toString(),
+                    title, type, status: newStatus, priority, rating, comment, scenes, energies, timeCosts,
+                    createdAt: nowTime,
+                    updatedAt: nowTime
                 };
                 appState.items.push(newItem);
             }
@@ -1253,6 +1266,22 @@
             elements.addItemModal.style.display = 'none';
         }
         
+        // 作品库排序逻辑：按照状态优先级（在搞 > 想试 > 已完成 > 已弃坑），内部按更新时间倒序
+        function getSortedItems() {
+            const statusOrder = { "在搞": 1, "想试": 2, "已完成！": 3, "已弃坑": 4 };
+            return [...appState.items].sort((a, b) => {
+                const orderA = statusOrder[a.status] || 5;
+                const orderB = statusOrder[b.status] || 5;
+                if (orderA !== orderB) {
+                    return orderA - orderB;
+                }
+                // 同状态下，最新改动的排在最前面 (updatedAt 降序)
+                const timeA = a.updatedAt || a.createdAt || 0;
+                const timeB = b.updatedAt || b.createdAt || 0;
+                return timeB - timeA;
+            });
+        }
+
         function renderItems() {
             elements.itemsContainer.innerHTML = '';
             if (appState.items.length === 0) {
@@ -1261,7 +1290,8 @@
             }
             elements.emptyLibrary.style.display = 'none';
             
-            appState.items.forEach(item => {
+            const sorted = getSortedItems();
+            sorted.forEach(item => {
                 const card = createItemElement(item);
                 elements.itemsContainer.appendChild(card);
             });
@@ -1269,7 +1299,7 @@
         
         function renderDoingItems() {
             elements.doingItemsContainer.innerHTML = '';
-            const doing = appState.items.filter(i => i.status === '在搞');
+            const doing = getSortedItems().filter(i => i.status === '在搞');
             if (doing.length === 0) {
                 elements.emptyDoing.style.display = 'block';
                 return;
