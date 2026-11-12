@@ -186,6 +186,27 @@
         .btn-warning { background-color: var(--pixel-warning); color: var(--pixel-text); }
         .btn-danger { background-color: var(--pixel-danger); color: white; }
 
+        /* 历史展开/收起按钮 */
+        .btn-toggle-history {
+            display: block;
+            width: 100%;
+            margin-top: 10px;
+            padding: 8px;
+            background-color: var(--pixel-bg);
+            border: 2px solid var(--pixel-border);
+            border-radius: 0;
+            font-size: 12px;
+            font-weight: bold;
+            color: var(--pixel-text);
+            cursor: pointer;
+            box-shadow: var(--pixel-shadow-sm);
+            text-align: center;
+        }
+        .btn-toggle-history:active {
+            transform: translate(1px, 1px);
+            box-shadow: 1px 1px 0px var(--pixel-border);
+        }
+
         /* 双列作品卡片布局 */
         #items-container {
             display: grid;
@@ -242,11 +263,11 @@
         }
 
         /* 状态标签颜色区分 */
-        .tag-doing { background-color: var(--pixel-warning); color: var(--pixel-text); } /* 在搞：像素黄 */
-        .tag-want { background-color: #55efc4; color: var(--pixel-text); } /* 想试：薄荷绿 */
+        .tag-doing { background-color: var(--pixel-warning); color: var(--pixel-text); }
+        .tag-want { background-color: #55efc4; color: var(--pixel-text); }
         .tag-type { background-color: var(--pixel-primary); color: white; }
-        .tag-done { background-color: var(--pixel-accent); color: white; } /* 已完成：深绿 */
-        .tag-dropped { background-color: var(--pixel-danger); color: white; } /* 已弃坑：红 */
+        .tag-done { background-color: var(--pixel-accent); color: white; }
+        .tag-dropped { background-color: var(--pixel-danger); color: white; }
         .tag-priority { background-color: #0984e3; color: white; }
         .tag-context { background-color: #a29bfe; color: white; }
 
@@ -735,7 +756,7 @@
                     </div>
                 </div>
 
-                <!-- 摇号历史 -->
+                <!-- 摇号历史（支持展开/收起） -->
                 <div class="section">
                     <h2 class="section-title">
                         <i class="fas fa-history"></i> 摇号历史档案
@@ -927,6 +948,7 @@
             sparks: 0.0,
             timer: { isRunning: false, timeLeft: 25 * 60, interval: null },
             pickerHistory: [],
+            isHistoryExpanded: false, // 控制摇号历史是否展开
             cooldownMap: {},
             selectorFilters: {
                 scenes: [],
@@ -1189,14 +1211,21 @@
             `;
         }
 
+        // 支持默认折叠(显示3条)和点击展开全部的渲染函数
         function renderPickerHistory() {
-            if (appState.pickerHistory.length === 0) {
+            const total = appState.pickerHistory.length;
+            if (total === 0) {
                 elements.pickerHistoryList.innerHTML = `<div style="text-align: center; color: var(--pixel-muted); padding: 10px; font-size: 12px;">暂无历史记录</div>`;
                 return;
             }
 
+            const COLLAPSED_LIMIT = 3;
+            const visibleItems = appState.isHistoryExpanded 
+                ? appState.pickerHistory 
+                : appState.pickerHistory.slice(0, COLLAPSED_LIMIT);
+
             let html = '';
-            appState.pickerHistory.forEach(h => {
+            visibleItems.forEach(h => {
                 html += `
                     <div class="history-item">
                         <div>
@@ -1210,7 +1239,23 @@
                     </div>
                 `;
             });
+
+            if (total > COLLAPSED_LIMIT) {
+                const btnText = appState.isHistoryExpanded 
+                    ? `[收起历史记录 ▲]` 
+                    : `[展开全部 ${total} 条记录 ▼]`;
+                html += `<button class="btn-toggle-history" id="btn-toggle-history">${btnText}</button>`;
+            }
+
             elements.pickerHistoryList.innerHTML = html;
+
+            const toggleBtn = document.getElementById('btn-toggle-history');
+            if (toggleBtn) {
+                toggleBtn.addEventListener('click', () => {
+                    appState.isHistoryExpanded = !appState.isHistoryExpanded;
+                    renderPickerHistory();
+                });
+            }
         }
 
         function updateAIMotivation() {
@@ -1227,7 +1272,10 @@
                 page.id === pageId ? page.classList.add('active') : page.classList.remove('active');
             });
             if (pageId === 'focus-page') renderDoingItems();
-            if (pageId === 'stats-page') { updateStats(); renderPickerHistory(); }
+            if (pageId === 'stats-page') { 
+                updateStats(); 
+                renderPickerHistory(); 
+            }
         }
         
         async function handleFormSubmit(e) {
@@ -1278,7 +1326,6 @@
             elements.addItemModal.style.display = 'none';
         }
         
-        // 排序规则：状态排序(在搞 > 想试 > 已完成 > 已弃坑)，同状态内按优先级高到低(P3>P2>P1>P0)，同优先级按时间最新
         function getSortedItems() {
             const statusOrder = { "在搞": 1, "想试": 2, "已完成！": 3, "已弃坑": 4 };
             return [...appState.items].sort((a, b) => {
@@ -1287,13 +1334,11 @@
                 if (orderA !== orderB) {
                     return orderA - orderB;
                 }
-                // 同状态下，按优先级高到低排序 (priority 数字大的在前)
                 const pA = parseInt(a.priority !== undefined ? a.priority : 3);
                 const pB = parseInt(b.priority !== undefined ? b.priority : 3);
                 if (pA !== pB) {
                     return pB - pA;
                 }
-                // 同优先级下，最新修改的排在最前面
                 const timeA = a.updatedAt || a.createdAt || 0;
                 const timeB = b.updatedAt || b.createdAt || 0;
                 return timeB - timeA;
